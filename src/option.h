@@ -11,6 +11,17 @@ public:
   double T_; /// maturité
   int TimeSteps_; /// nombre de pas de temps de discrétisation
   int size_; /// dimension du modèle, redondant avec BS::size_
+  
+  /**
+   * Constructeur de la classe Option
+   */
+  Option(double T_, int TimeSteps_, int size);
+  
+  /**
+   * Destructeur de la classe Option
+   */
+  ~Option();
+  
   /**
    * Calcule la valeur du payoff sur la trajectoire
    *
