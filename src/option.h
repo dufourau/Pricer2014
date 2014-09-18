@@ -20,7 +20,7 @@ public:
   /**
    * Destructeur de la classe Option
    */
-  ~Option();
+  virtual ~Option();
   
   /**
    * Calcule la valeur du payoff sur la trajectoire
