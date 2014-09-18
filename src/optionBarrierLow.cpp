@@ -3,7 +3,7 @@
 
 using namespace std;
 
-OptionBarrierLow::OptionBarrierLow(double T_, int timeSteps_, int size_, double strike_, PnlVect* payoffCoeff_, PnlVect* lowerBarrier_) : Option(T_, timeSteps_, size_)
+OptionBarrierLow::OptionBarrierLow(const double T_, const int timeSteps_, const int size_, const double strike_, const PnlVect* payoffCoeff_, const PnlVect* lowerBarrier_) : Option(T_, timeSteps_, size_)
 {
   this->strike_ = strike_;
   this->payoffCoeff_ = pnl_vect_copy(payoffCoeff_);
@@ -17,4 +17,5 @@ OptionBarrierLow::~OptionBarrierLow(){
 
 double OptionBarrierLow::payoff(const PnlMat *path)
 {
+	
 }

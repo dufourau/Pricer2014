@@ -1,9 +1,9 @@
+#include "gtest/gtest.h"
 #include "../src/optionBarrierLow.h"
 #include "../src/optionBasket.h"
 #include <iostream>
 
 TEST (OptionBasket, Payoff) {
-  
   double T_ = 3.0;
   int timeSteps_ = 1;
   int size_ = 3;
@@ -15,6 +15,4 @@ TEST (OptionBasket, Payoff) {
   double payoff = ob->payoff(path);
   
   ASSERT_EQ(payoff,1.0);
-    
 }
-
