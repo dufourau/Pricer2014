@@ -61,9 +61,13 @@ else(EXISTS /usr/src/gtest)
 endif(EXISTS /usr/src/gtest)
 
 # Link test executable against gtest & gtest_main
-add_executable(runUnitTests src/allTests.cpp src/optionBarrierLow.cpp src/option.cpp test/option-test.cpp)
+add_executable(runUnitTests src/allTests.cpp src/optionBarrierLow.cpp src/optionAsian.cpp src/option.cpp test/option-test.cpp)
 target_link_libraries(runUnitTests ${LIBS} gtest gtest_main)
 add_test(RunUnitTests runUnitTests)
+
+ add_executable(optionAsian-test src/test_option.cpp src/optionAsian.cpp src/option.cpp )
+ target_link_libraries(optionAsian-test ${LIBS})
+ install(TARGETS optionAsian-test DESTINATION bin)
 
 add_test(
     NAME runUnitTests
