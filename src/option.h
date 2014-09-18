@@ -15,7 +15,7 @@ public:
   /**
    * Constructeur de la classe Option
    */
-  Option(double T_, int TimeSteps_, int size);
+  Option(const double T_, const int TimeSteps_, const int size);
   
   /**
    * Destructeur de la classe Option
