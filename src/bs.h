@@ -14,13 +14,10 @@ public:
   double rho_; /// paramètre de corrélation
   PnlVect *sigma_; /// vecteur de volatilités
   PnlVect *spot_; /// valeurs initiales du sous-jacent
-<<<<<<< HEAD
   PnlMat *chol;
   BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_);
   ~BS();
-=======
 
->>>>>>> 0f0d974... Add computecholesky
   /**
    * Génère une trajectoire du modèle et la stocke dans path
    *
@@ -58,21 +55,15 @@ public:
    * @param[in] d indice du sous-jacent à shifter
    * @param[in] timestep pas de constatation du sous-jacent
    */
-<<<<<<< HEAD
   void shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep);
-=======
-  void shift_asset(PnlMat *shift_path, const PnlMat *path,
-                   int d, double h, double t, double timestep);
->>>>>>> 0f0d974... Add computecholesky
+
 
   /**
    * Compute Cholesky factorization for the identity matrix
    * @param[out] Return the cholesky factorized matrix
-<<<<<<< HEAD
    * @param[in] rho_ paramètre de corrélation
-=======
    * @param[in] rho_ param�tre de corrélation
->>>>>>> 0f0d974... Add computecholesky
+
    */
   void computeCholesky(PnlMat *L, double rho_);
 
