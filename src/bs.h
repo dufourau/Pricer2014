@@ -15,14 +15,13 @@ public:
   PnlVect *sigma_; /// vecteur de volatilités
   PnlVect *spot_; /// valeurs initiales du sous-jacent
   PnlMat *chol;
-
-  BS(PnlVect *spot_, PnlVect *sigma_,double rho,double r_,int size_);
+  BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_);
   ~BS();
   /**
    * Génère une trajectoire du modèle et la stocke dans path
    *
    * @param[out] path contient une trajectoire du modèle.
-   * C'est une matrice de taille (N+1) x d  
+   * C'est une matrice de taille d x (N+1)
    * @param[in] T  maturité
    * @param[in] N nombre de dates de constatation
    */
@@ -57,13 +56,13 @@ public:
    */
   void shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep);
 
-
   /**
    * Compute Cholesky factorization for the identity matrix
    * @param[out] Return the cholesky factorized matrix
    * @param[in] rho_ paramètre de corrélation
    */
   void computeCholesky(PnlMat *L, double rho_);
+
 
 };
 
