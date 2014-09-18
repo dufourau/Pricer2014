@@ -57,7 +57,6 @@ public:
    */
   void shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep);
 
-
   /**
    * Compute Cholesky factorization for the identity matrix
    * @param[out] Return the cholesky factorized matrix

@@ -10,7 +10,7 @@ public:
   PnlVect* payoffCoeff_;
   PnlVect* lowerBarrier_;
 
-  OptionBarrierLow(double T_, int timeSteps_, int size_, double strike_, PnlVect* payoffCoeff_, PnlVect* lowerBarrier_);
+  OptionBarrierLow(const double T_, const int timeSteps_, const int size_, const double strike_, const PnlVect* payoffCoeff_, const PnlVect* lowerBarrier_);
 
   double payoff(const PnlMat *path);
 
