@@ -43,10 +43,6 @@ install(TARGETS parser-test DESTINATION bin)
  target_link_libraries(bs-test ${LIBS})
  install(TARGETS bs-test DESTINATION bin)
 
-add_executable(option-test src/optionAsian.cpp src/option.cpp src/test_option.cpp)
-target_link_libraries(option-test ${LIBS})
-install(TARGETS option-test DESTINATION bin)
-
 # Add google test
 if(EXISTS /usr/src/gtest)
     add_subdirectory(/usr/src/gtest ./gtest)
@@ -74,15 +70,6 @@ add_test(
     COMMAND runUnitTests
 )
 
-
 # add_executable(mc-pricer src/parser.cpp src/pricer.cpp)
 # target_link_libraries(mc-pricer ${LIBS})
 # install(TARGETS mc-pricer DESTINATION bin)
-
-
-# Testing the option basket
-add_executable(optionBasket-test src/optionBasket.cpp src/option.cpp src/test-optionBasket.cpp)
-target_link_libraries(optionBasket-test ${LIBS})
-install(TARGETS optionBasket-test DESTINATION bin)
-
-
