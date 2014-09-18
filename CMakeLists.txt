@@ -43,7 +43,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 # Link test executable against gtest & gtest_main
 add_executable(runUnitTests src/allTests.cpp src/optionBarrierLow.cpp src/option.cpp test/option-test.cpp)
-target_link_libraries(runUnitTests gtest gtest_main)
+target_link_libraries(runUnitTests gtest gtest_main ${LIBS})
 add_test(RunUnitTests runUnitTests)
 
 add_test(
