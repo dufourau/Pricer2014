@@ -3,11 +3,17 @@
 
 #include "option.h"
 
-class OptionBasket : 
-public Option{
+class OptionBasket : public Option
+{
+public:
+  double strike_;
+  PnlVect * payoffCoeff_;
 
+  OptionBasket(double T_, int timeSteps_, int size_, double strike_, PnlVect* payoffCoeff);
   
+  ~OptionBasket();
 
+  double payoff(const PnlMat *path);
 };
 
 #endif //_OPTIONBASKET_H
