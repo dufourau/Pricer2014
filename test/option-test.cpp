@@ -2,5 +2,6 @@
 #include "../src/optionBarrierLow.h"
 
 TEST (OptionBarrierLowTest, Payoff) {
-	OptionBarrierLow* o = new OptionBarrierLow(0, 0, 0, 0, NULL, NULL);
+	PnlVect* p = pnl_vect_new();
+	OptionBarrierLow* o = new OptionBarrierLow(0, 0, 0, 0, p, p);
 }
