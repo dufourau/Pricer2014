@@ -17,6 +17,7 @@ public:
   PnlMat *chol;
   BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_);
   ~BS();
+
   /**
    * Génère une trajectoire du modèle et la stocke dans path
    *
@@ -54,12 +55,21 @@ public:
    * @param[in] d indice du sous-jacent à shifter
    * @param[in] timestep pas de constatation du sous-jacent
    */
+<<<<<<< HEAD
   void shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep);
+=======
+  void shift_asset(PnlMat *shift_path, const PnlMat *path,
+                   int d, double h, double t, double timestep);
+>>>>>>> 5035f17ab17920000c3e4c2fd3fe269281857483
 
   /**
    * Compute Cholesky factorization for the identity matrix
    * @param[out] Return the cholesky factorized matrix
+<<<<<<< HEAD
    * @param[in] rho_ paramètre de corrélation
+=======
+   * @param[in] rho_ param�tre de corrélation
+>>>>>>> 5035f17ab17920000c3e4c2fd3fe269281857483
    */
   void computeCholesky(PnlMat *L, double rho_);
 
