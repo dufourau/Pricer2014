@@ -42,3 +42,9 @@ install(TARGETS parser-test DESTINATION bin)
 # install(TARGETS mc-pricer DESTINATION bin)
 
 
+# Testing the option basket
+add_executable(optionBasket-test src/optionBasket.cpp src/option.cpp src/test-optionBasket.cpp)
+target_link_libraries(optionBasket-test ${LIBS})
+install(TARGETS optionBasket-test DESTINATION bin)
+
+
