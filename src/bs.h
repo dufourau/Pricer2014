@@ -5,43 +5,42 @@
 #include "pnl/pnl_vector.h"
 #include "pnl/pnl_matrix.h"
 
-/// \brief Modèle de Black Scholes
+/// \brief ModÃ¨le de Black Scholes
 class BS
 {
 public:
-  int size_; /// nombre d'actifs du modèle
-  double r_; /// taux d'intérêt
-  double rho_; /// paramètre de corrélation
-  PnlVect *sigma_; /// vecteur de volatilités
+  int size_; /// nombre d'actifs du modÃ¨le
+  double r_; /// taux d'intÃ©rÃªt
+  double rho_; /// paramÃ¨tre de corrÃ©lation
+  PnlVect *sigma_; /// vecteur de volatilitÃ©s
   PnlVect *spot_; /// valeurs initiales du sous-jacent
   PnlMat *chol;
 
   BS(PnlVect *spot_, PnlVect *sigma_,double rho,double r_,int size_);
   ~BS();
   /**
-   * Génère une trajectoire du modèle et la stocke dans path
+   * GÃ©nÃ¨re une trajectoire du modÃ¨le et la stocke dans path
    *
-   * @param[out] path contient une trajectoire du modèle.
+   * @param[out] path contient une trajectoire du modÃ¨le.
    * C'est une matrice de taille (N+1) x d  
-   * @param[in] T  maturité
+   * @param[in] T  maturitÃ©
    * @param[in] N nombre de dates de constatation
    */
   void asset(PnlMat *path, double T, int N, PnlRng *rng);
 
   /**
    * Calcule une trajectoire du sous-jacent connaissant le
-   * passé jusqu' à la date t
+   * passÃ© jusqu' Ã  la date t
    *
    * @param[out] path  contient une trajectoire du sous-jacent
-   * donnée jusqu'à l'instant t par la matrice past
-   * @param[in] t date jusqu'à laquelle on connait la trajectoire
-   * t n'est pas forcément une date de discrétisation
+   * donnÃ©e jusqu'Ã  l'instant t par la matrice past
+   * @param[in] t date jusqu'Ã  laquelle on connait la trajectoire
+   * t n'est pas forcÃ©ment une date de discrÃ©tisation
    * @param[in] N nombre de pas de constatation
-   * @param[in] T date jusqu'à laquelle on simule la trajectoire
-   * @param[in] past trajectoire réalisée jusqu'a la date t
+   * @param[in] T date jusqu'Ã  laquelle on simule la trajectoire
+   * @param[in] past trajectoire rÃ©alisÃ©e jusqu'a la date t
    */
-  void asset(PnlMat *path, double t, int N, double T,
-             PnlRng *rng, const PnlMat *past);
+  void asset(PnlMat *path, double t, int N, double T,PnlRng *rng, const PnlMat *past);
 
   /**
    * Shift d'une trajectoire du sous-jacent
@@ -49,21 +48,20 @@ public:
    * @param[in]  path contient en input la trajectoire
    * du sous-jacent
    * @param[out] shift_path contient la trajectoire path
-   * dont la composante d a été shiftée par (1+h)
-   * à partir de la date t.
-   * @param[in] t date à partir de laquelle on shift
-   * @param[in] h pas de différences finies
-   * @param[in] d indice du sous-jacent à shifter
+   * dont la composante d a Ã©tÃ© shiftÃ©e par (1+h)
+   * Ã  partir de la date t.
+   * @param[in] t date Ã  partir de laquelle on shift
+   * @param[in] h pas de diffÃ©rences finies
+   * @param[in] d indice du sous-jacent Ã  shifter
    * @param[in] timestep pas de constatation du sous-jacent
    */
-  void shift_asset(PnlMat *shift_path, const PnlMat *path,
-                   int d, double h, double t, double timestep);
+  void shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep);
 
 
   /**
    * Compute Cholesky factorization for the identity matrix
    * @param[out] Return the cholesky factorized matrix
-   * @param[in] rho_ paramètre de corrélation
+   * @param[in] rho_ paramÃ¨tre de corrÃ©lation
    */
   void computeCholesky(PnlMat *L, double rho_);
 

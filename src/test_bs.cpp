@@ -12,7 +12,7 @@ int main(int argc, char **argv)
   spot= pnl_vect_new ();
   sigma= pnl_vect_new ();
 
-  //Call Constructor
+  //TEST Constructor
   BS *b;
   rho= 1.1;
   r= 2.1;
@@ -24,6 +24,20 @@ int main(int argc, char **argv)
   cout << "size " <<  b->size_ << endl;
   pnl_vect_free(&spot);
   pnl_vect_free(&sigma);
-  //
+  //TEST gaussien vector
+  //Initiliaze the generator
+  PnlRng *rng;
+  rng= pnl_rng_create (PNL_RNG_MERSENNE);
+  pnl_rng_sseed (rng, 0);
+
+  PnlMat *path;
+  path= pnl_mat_new();
+  PnlMat *past_path;
+  past_path= pnl_mat_new();
+  b->asset(path,1,2,3,rng,past_path);
+  
+  pnl_rng_free(&rng);
+
+
   exit(0);
 }
