@@ -4,6 +4,7 @@ using namespace std;
 
 #include "option.h"
 
+
 Option::Option(double T_, int timeSteps_, int size_){
   this->T_ = T_;
   this->TimeSteps_ = timeSteps_;

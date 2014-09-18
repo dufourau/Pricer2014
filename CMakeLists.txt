@@ -37,6 +37,10 @@ add_executable(parser-test src/parser.cpp src/test_parser.cpp)
 target_link_libraries(parser-test ${LIBS})
 install(TARGETS parser-test DESTINATION bin)
 
+add_executable(option-test src/optionAsian.cpp src/option.cpp src/test_option.cpp)
+target_link_libraries(option-test ${LIBS})
+install(TARGETS option-test DESTINATION bin)
+
 # Add google test
 if(EXISTS /usr/src/gtest)
     add_subdirectory(/usr/src/gtest ./gtest)
@@ -63,6 +67,7 @@ add_test(
     NAME runUnitTests
     COMMAND runUnitTests
 )
+
 
 # add_executable(mc-pricer src/parser.cpp src/pricer.cpp)
 # target_link_libraries(mc-pricer ${LIBS})
