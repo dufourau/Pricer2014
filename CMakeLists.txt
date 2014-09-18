@@ -48,12 +48,25 @@ target_link_libraries(option-test ${LIBS})
 install(TARGETS option-test DESTINATION bin)
 
 # Add google test
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
+if(EXISTS /usr/src/gtest)
+    add_subdirectory(/usr/src/gtest ./gtest)
+else(EXISTS /usr/src/gtest)
+  if(EXISTS /usr/bin/gtest-config)
+    execute_process(COMMAND gtest-config --cppflags --cxxflags OUTPUT_VARIABLE CENTOS_GTEST_CFLAGS)
+    execute_process(COMMAND gtest-config --ldflags --libs OUTPUT_VARIABLE CENTOS_GTEST_LDFLAGS)
+    string(STRIP "${CENTOS_GTEST_CFLAGS}" CENTOS_GTEST_CFLAGS)
+    string(STRIP "${CENTOS_GTEST_LDFLAGS}" CENTOS_GTEST_LDFLAGS)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CENTOS_GTEST_CFLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CENTOS_GTEST_LDFLAGS} -lgtest_main")
+  else(EXISTS /usr/bin/gtest-config)
+    find_package(GTest REQUIRED)
+    include_directories(${GTEST_INCLUDE_DIRS})
+  endif(EXISTS /usr/bin/gtest-config)
+endif(EXISTS /usr/src/gtest)
 
 # Link test executable against gtest & gtest_main
 add_executable(runUnitTests src/allTests.cpp src/optionBarrierLow.cpp src/option.cpp test/option-test.cpp)
-target_link_libraries(runUnitTests gtest gtest_main)
+target_link_libraries(runUnitTests ${LIBS} gtest gtest_main)
 add_test(RunUnitTests runUnitTests)
 
 add_test(
