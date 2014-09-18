@@ -50,12 +50,16 @@ void BS::computeCholesky(PnlMat *chol,double rho_){
 
 }
 
-void asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
+void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
+	
 
+	PnlVect *vectorGaussian;
+	vectorGaussian= pnl_vect_create(this->size_);
+	pnl_vect_rng_normal(vectorGaussian,10,rng);
+	cout<<"Loi normale standard"<<endl;
+	pnl_vect_print(vectorGaussian);
+	pnl_vect_free(&vectorGaussian);
 	
-	
-	//Simulate a series of gaussien vector
-	//simulateGaussienVectors();
 
 }
 
