@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <math.h>  
-
+#include "assert.h"
 using namespace std;
 
 #include "bs.h"
@@ -35,14 +35,10 @@ void BS::computeCholesky(PnlMat *chol,double rho_){
 	covMatrix= pnl_mat_create_from_scalar(size_,size_, rho_);
 	//Set the diagonal to 1.	
 	pnl_mat_set_diag(covMatrix,1,0);
-	cout<<"covMatrix"<<endl;
-	pnl_mat_print(covMatrix);
 	
 	//TODO: Analyze the error message
 	int exitChol= pnl_mat_chol(covMatrix);
 	cout<<"exitChol "<<exitChol<<endl;
-	cout<<"cholesky"<<endl;
-	pnl_mat_print(covMatrix);
 	//Clone the result
 	pnl_mat_clone (chol, covMatrix);
 	//Free the temp matrix
@@ -78,6 +74,8 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 			}
 		}
 	}else{
+		pnl_mat_clone(path,past);
+
 
 	}
 	pnl_vect_free(&vectorGaussian);
@@ -108,7 +106,6 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 
 	//For each time t between 0 and T.
 	assert(N!=0);
-	assert(T%N==0);
 	PnlVect *vectorGaussian;
 	vectorGaussian= pnl_vect_create(this->size_);
 
@@ -116,10 +113,10 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 		pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
 		//For each assets 
 		for(int j=0; j<this->size_; j++){
-			MLET(path,i,j)=this->computeIteration(MGET(path,i-1,j),T/N,j);
+			MLET(path,i,j)=this->computeIteration(MGET(path,i-1,j),T/N,j,vectorGaussian);
 		}
 	}
-	pnl_vect_free(vectorGaussian);
+	pnl_vect_free(&vectorGaussian);
 }
 
 
