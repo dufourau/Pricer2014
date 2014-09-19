@@ -72,7 +72,6 @@ double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVe
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng)
 {
 
-	//For each time t between 0 and T.
 	assert(N!=0);
 	assert(((int)T)%N==0);
 	PnlVect *vectorGaussian;
