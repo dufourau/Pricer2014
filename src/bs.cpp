@@ -53,37 +53,52 @@ void BS::computeCholesky(PnlMat *chol,double rho_){
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
 	
 
-	PnlVect *vectorGaussian;
-	vectorGaussian= pnl_vect_create(this->size_);
-	pnl_vect_rng_normal(vectorGaussian,this->size,rng);
-	cout<<"Loi normale standard"<<endl;
-	pnl_vect_print(vectorGaussian);
-	pnl_vect_free(&vectorGaussian);
+	
 	//Discretization step
 	double h= T / N;
-
+	PnlVect *vectorGaussian;
+	vectorGaussian= pnl_vect_create(this->size_);
 	//Start by testing if t if a discretization time
 	if(t % h == 0){
 		pnl_mat_clone(path,past);
 		//Loop over time: t+h to T
-		for(double = t+h; d<= T ; d=d+h){
+		for(double i= t; d<= T ; d=d+h){
+			
+			pnl_vect_rng_normal(vectorGaussian,this->size,rng);
 			//Loop on assets
-			for(){}
+			for(int j= 0; j < this->size_ ;j++){
+				//Get the currentPrice
+				double computedPrice;
+				double currentPrice= pnl_sp_mat_get(path,i,j);
+				//Compute the new and set it
+				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian);
+				pnl_sp_mat_set(path,i+h,j,computedPrice);
+			}
 		}
-
-
 	}else{
 
 	}
-
+	pnl_vect_free(&vectorGaussian);
 
 
 	
 
 }
 
-void BS::computeIteration(double computedPrice, double currentPrice, double h, int assetIndex){
+void BS::computeIteration(double computedPrice, double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian){
+	//Simulate the gaussian vector.
+	PnlVect *rowChol;
+	rowChol= pnl_vect_create(this->size_);
 	
+	
+	pnl_vect_wrap_mat_row(this->chol,assetIndex)
+
+	
+
+
+	
+
+
 }
 
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
