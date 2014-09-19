@@ -50,12 +50,6 @@ void BS::computeCholesky(PnlMat *chol,double rho_){
 
 }
 
-void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
-
-
-	
-}
-
 
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
 	
@@ -89,26 +83,23 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 
 }
 
-void BS::computeIteration(double computedPrice, double currentPrice, double h, int assetIndex){
+double BS::computeIteration(double currentPrice, double h, int assetIndex){
 	
 }
 
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 
 	//For each time t between 0 and T.
-	for(int t=0;t<=T;t= T/N){
+	assert(N!=0);
+
+	for(int i=1;i<N+1;i++){
 		
 		PnlVect *vectorGaussian;
 		vectorGaussian= pnl_vect_create(this->size_);
 		pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
 		//For each assets 
-		for(int d=0; d<this->size_; d++){
-
-			chol;
-
-			pnl_vect_mult_vect_term(,vectorGaussian);
-
-
+		for(int j=0; j<this->size_; j++){
+			MLET(path,i,j)=this->computeIteration(MGET(path,i-1,j),T/N,j);
 		}
 	}
 

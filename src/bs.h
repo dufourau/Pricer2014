@@ -74,7 +74,7 @@ public:
    * @param[in]  assetIndex
    * @param[out] computedPrice
    */
-  void computeIteration(double computedPrice, double currentPrice, double h, int assetIndex);
+  double computeIteration(double currentPrice, double h, int assetIndex);
 
     
 };
