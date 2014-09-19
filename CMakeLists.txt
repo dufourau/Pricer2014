@@ -66,8 +66,10 @@ add_executable(runUnitTests
     src/optionBarrierUp.cpp 
     src/optionBarrier.cpp 
     src/optionBasket.cpp 
+    src/optionPerformance.cpp
     test/optionBasket-test.cpp 
     test/optionBarrier-test.cpp 
+    test/optionPerformance-test.cpp
     src/option.cpp 
     test/option-test.cpp
     )
