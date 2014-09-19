@@ -54,6 +54,7 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 	double h= T / N;
 	PnlVect *vectorGaussian;
 	vectorGaussian= pnl_vect_create(this->size_);
+
 	//Start by testing if t if a discretization time
 	if(fmod(t,h)== 0){
 		pnl_mat_clone(path,past);
@@ -80,8 +81,35 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 	}
 	pnl_vect_free(&vectorGaussian);
 
+}
+
 
 	
+
+
+	
+
+
+}
+
+void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
+
+	//For each time t between 0 and T.
+	for(int t=0;t<=T;t= T/N){
+		
+		PnlVect *vectorGaussian;
+		vectorGaussian= pnl_vect_create(this->size_);
+		pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
+		//For each assets 
+		for(int d=0; d<this->size_; d++){
+
+			chol;
+
+			pnl_vect_mult_vect_term(,vectorGaussian);
+
+
+		}
+	}
 
 }
 
@@ -118,6 +146,10 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 	}
 	pnl_vect_free(&vectorGaussian);
 }
+
+
+
+
 
 
 
