@@ -18,6 +18,7 @@ public:
 
   BS(PnlVect *spot_, PnlVect *sigma_,double rho,double r_,int size_);
   ~BS();
+
   /**
    * Génère une trajectoire du modèle et la stocke dans path
    *
@@ -64,7 +65,18 @@ public:
    * @param[in] rho_ paramètre de corrélation
    */
   void computeCholesky(PnlMat *L, double rho_);
+  
+  /*
+   * Shift d'une trajectoire du sous-jacent
+   *
+   * @param[in]  currentPrice
+   * @param[in]  h
+   * @param[in]  assetIndex
+   * @param[out] computedPrice
+   */
+  double computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian);
 
+    
 };
 
 
