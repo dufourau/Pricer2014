@@ -64,8 +64,8 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 }
 
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
-
-
+  
+  NULL;
 }
 
 

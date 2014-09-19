@@ -5,7 +5,7 @@
 #include "pnl/pnl_matrix.h"
 
 namespace utils {
-  double computeBasketPayoff(const PnlMat *path, const PnlVect *payoffCoeff_, double T_, double strike);
+  double computePayoff(const PnlMat *path, const PnlVect *payoffCoeff_, int TimeSteps_, double strike);
 } // utils
 
 

@@ -3,14 +3,14 @@
 
 namespace utils {
 
-  double computeBasketPayoff(const PnlMat *path, const PnlVect *payoffCoeff_, double T_, double strike){
+  double computePayoff(const PnlMat *path, const PnlVect *payoffCoeff_, int TimeSteps_, double strike){
     double res = 0.0;
 
     int i;
     PnlVect * assetAtMaturity = pnl_vect_new();
 
     //On extrait la ligne 
-    pnl_mat_get_row(assetAtMaturity, path, T_-1); 
+    pnl_mat_get_row(assetAtMaturity, path, TimeSteps_); 
     
     assert(assetAtMaturity->size == payoffCoeff_->size);
 

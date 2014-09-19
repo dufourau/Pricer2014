@@ -78,6 +78,7 @@ add_executable(runUnitTests
     test/option-test.cpp
     src/mc.cpp
     src/parser.cpp
+    src/bs.cpp
     )
 
 target_link_libraries(runUnitTests ${LIBS} gtest gtest_main)

@@ -72,8 +72,7 @@ void MonteCarlo::price(double &prix, double &ic){
     //Matrix of assets
     PnlMat* path = pnl_mat_new();
    
-    //TODO   
-    //mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
+    mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
  
     //Calcul du payOff   
     double payOffOption = opt_->payoff(path);
