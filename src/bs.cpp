@@ -10,7 +10,8 @@ using namespace std;
 
 
 //Blacḱ&Scholes Constructor
-BS::BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_){
+BS::BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_)
+{
 	this->spot_= spot_;
 	this->sigma_= sigma_;
 	this->rho_= rho_;
@@ -23,12 +24,14 @@ BS::BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_){
 	this->chol= chol;
 }
 	
-BS::~BS(){
+BS::~BS()
+{
 	//Free the cholesky matrix
 	pnl_mat_free(&chol);
 }
 
-void BS::computeCholesky(PnlMat *chol,double rho_){
+void BS::computeCholesky(PnlMat *chol,double rho_)
+{
 	//Intial correlation matrix
 	PnlMat *covMatrix;
 	double size_= this->size_;
@@ -54,7 +57,6 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 	double h= T / N;
 	PnlVect *vectorGaussian;
 	vectorGaussian= pnl_vect_create(this->size_);
-
 	//Start by testing if t if a discretization time
 	if(fmod(t,h)== 0){
 		pnl_mat_clone(path,past);
@@ -75,11 +77,14 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 			}
 		}
 	}else{
+
 		pnl_mat_clone(path,past);
 
 
 	}
 	pnl_vect_free(&vectorGaussian);
+
+
 
 }
 
