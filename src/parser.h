@@ -5,6 +5,7 @@
 #include <map>
 #include <boost/variant.hpp>
 #include <cstring>
+#include <iostream>
 #include "pnl/pnl_matrix.h"
 
 #define MAX_CHAR_LINE 1024

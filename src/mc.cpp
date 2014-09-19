@@ -1,5 +1,6 @@
 #include "mc.h"
 #include <cstring>
+#include <math.h>
 
 
 /**
@@ -62,4 +63,21 @@ Option* MonteCarlo::createOption(char* key, Param *P){
   else{
     return NULL;
   }
+}
+
+
+void MonteCarlo::price(double &prix, double &ic){
+    double coeffActu = exp(- (mod_->r_ * opt_->T_) );
+  
+    //Matrix of assets
+    PnlMat* path = pnl_mat_new();
+   
+    //TODO   
+    //mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
+ 
+    //Calcul du payOff   
+    double payOffOption = opt_->payoff(path);
+    
+    prix = coeffActu * payOffOption;
+
 }
