@@ -11,8 +11,8 @@ TEST (OptionBasket1, Payoff) {
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
   PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
    
-  OptionBasket* ob = new OptionBasket(T_,timeSteps_,size_,strike_,coeffPayoff);
-  double payoff = ob->payoff(path);
+  OptionBasket ob = OptionBasket(T_,timeSteps_,size_,strike_,coeffPayoff);
+  double payoff = ob.payoff(path);
   
   pnl_vect_free(&coeffPayoff);
   pnl_mat_free(&path);
@@ -27,8 +27,8 @@ TEST (OptionBasket2, Payoff) {
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
   PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
    
-  OptionBasket* ob = new OptionBasket(T_,timeSteps_,size_,strike_,coeffPayoff);
-  double payoff = ob->payoff(path);
+  OptionBasket ob = OptionBasket(T_,timeSteps_,size_,strike_,coeffPayoff);
+  double payoff = ob.payoff(path);
   
   pnl_vect_free(&coeffPayoff);
   pnl_mat_free(&path);

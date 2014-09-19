@@ -10,13 +10,17 @@ TEST (OptionBarrierLowTest, PayoffNotNull) {
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  const PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
-  const PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
+  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
+  PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
 
-  OptionBarrierLow* ob = new OptionBarrierLow(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier);
-  double payoff = ob->payoff(path);
+  OptionBarrierLow ob = OptionBarrierLow(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier);
+  double payoff = ob.payoff(path);
   
   ASSERT_EQ(payoff,10);
+
+  pnl_vect_free(&coeffPayoff);
+  pnl_mat_free(&path);
+  pnl_vect_free(&lowerBarrier);
 }
 
 TEST (OptionBarrierLowTest, PayoffNull) {
@@ -25,13 +29,17 @@ TEST (OptionBarrierLowTest, PayoffNull) {
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  const PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
-  const PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
+  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
+  PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
 
-  OptionBarrierLow* ob = new OptionBarrierLow(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier);
-  double payoff = ob->payoff(path);
+  OptionBarrierLow ob = OptionBarrierLow(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier);
+  double payoff = ob.payoff(path);
   
   ASSERT_EQ(payoff,0);
+
+  pnl_vect_free(&coeffPayoff);
+  pnl_mat_free(&path);
+  pnl_vect_free(&lowerBarrier);
 }
 
 TEST (OptionBarrierUpTest, PayoffNull) {
@@ -40,13 +48,17 @@ TEST (OptionBarrierUpTest, PayoffNull) {
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  const PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
-  const PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
+  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
+  PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
 
-  OptionBarrierUp* ob = new OptionBarrierUp(T_,timeSteps_,size_,strike_,coeffPayoff, upperBarrier);
-  double payoff = ob->payoff(path);
+  OptionBarrierUp ob = OptionBarrierUp(T_,timeSteps_,size_,strike_,coeffPayoff, upperBarrier);
+  double payoff = ob.payoff(path);
   
   ASSERT_EQ(payoff,0);
+
+  pnl_vect_free(&coeffPayoff);
+  pnl_mat_free(&path);
+  pnl_vect_free(&upperBarrier);
 }
 
 TEST (OptionBarrierUpTest, PayoffNotNull) {
@@ -55,13 +67,17 @@ TEST (OptionBarrierUpTest, PayoffNotNull) {
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  const PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
-  const PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
+  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
+  PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
 
-  OptionBarrierUp* ob = new OptionBarrierUp(T_,timeSteps_,size_,strike_,coeffPayoff, upperBarrier);
-  double payoff = ob->payoff(path);
+  OptionBarrierUp ob = OptionBarrierUp(T_,timeSteps_,size_,strike_,coeffPayoff, upperBarrier);
+  double payoff = ob.payoff(path);
   
   ASSERT_EQ(payoff,1);
+
+  pnl_vect_free(&coeffPayoff);
+  pnl_mat_free(&path);
+  pnl_vect_free(&upperBarrier);
 }
 
 TEST (OptionBarrierTest, PayoffNotNull) {
@@ -70,14 +86,19 @@ TEST (OptionBarrierTest, PayoffNotNull) {
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  const PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
-  const PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
-  const PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 0.0, 0.0, 0.0);
+  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
+  PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
+  PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 0.0, 0.0, 0.0);
 
-  OptionBarrier* ob = new OptionBarrier(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier, upperBarrier);
-  double payoff = ob->payoff(path);
+  OptionBarrier ob = OptionBarrier(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier, upperBarrier);
+  double payoff = ob.payoff(path);
   
   ASSERT_EQ(payoff,1);
+
+  pnl_vect_free(&coeffPayoff);
+  pnl_mat_free(&path);
+  pnl_vect_free(&lowerBarrier);
+  pnl_vect_free(&upperBarrier);
 }
 
 TEST (OptionBarrierTest, PayoffNull) {
@@ -86,12 +107,17 @@ TEST (OptionBarrierTest, PayoffNull) {
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  const PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
-  const PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
-  const PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 0.0, 0.0, 0.0);
+  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
+  PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
+  PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 0.0, 0.0, 0.0);
 
-  OptionBarrier* ob = new OptionBarrier(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier, upperBarrier);
-  double payoff = ob->payoff(path);
+  OptionBarrier ob = OptionBarrier(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier, upperBarrier);
+  double payoff = ob.payoff(path);
   
   ASSERT_EQ(payoff,0);
+
+  pnl_vect_free(&coeffPayoff);
+  pnl_mat_free(&path);
+  pnl_vect_free(&lowerBarrier);
+  pnl_vect_free(&upperBarrier);
 }
