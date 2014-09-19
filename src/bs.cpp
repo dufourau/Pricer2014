@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <math.h>  
 
 using namespace std;
 
@@ -52,27 +53,27 @@ void BS::computeCholesky(PnlMat *chol,double rho_){
 
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
 	
-
-	
 	//Discretization step
 	double h= T / N;
 	PnlVect *vectorGaussian;
 	vectorGaussian= pnl_vect_create(this->size_);
 	//Start by testing if t if a discretization time
-	if(t % h == 0){
+	if(fmod(t,h)== 0){
 		pnl_mat_clone(path,past);
+		int currentIndex= past->m;
 		//Loop over time: t+h to T
-		for(double i= t; d<= T ; d=d+h){
+		for(double i= t; i<= T ; i=i+h){
 			
-			pnl_vect_rng_normal(vectorGaussian,this->size,rng);
+			pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
 			//Loop on assets
 			for(int j= 0; j < this->size_ ;j++){
 				//Get the currentPrice
 				double computedPrice;
-				double currentPrice= pnl_sp_mat_get(path,i,j);
+				double currentPrice= pnl_mat_get(path,currentIndex,j);
 				//Compute the new and set it
 				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian);
-				pnl_sp_mat_set(path,i+h,j,computedPrice);
+				currentIndex++;
+				pnl_mat_set(path,currentIndex,j,computedPrice);
 			}
 		}
 	}else{
@@ -85,40 +86,24 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 
 }
 
-void BS::computeIteration(double computedPrice, double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian){
-	//Simulate the gaussian vector.
+double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian){
+	//Compute the scalar product
 	PnlVect *rowChol;
 	rowChol= pnl_vect_create(this->size_);
-	
-	
-	pnl_vect_wrap_mat_row(this->chol,assetIndex)
+	*rowChol= pnl_vect_wrap_mat_row(this->chol,assetIndex);
+	double scalarResult= pnl_vect_scalar_prod(rowChol, vectorGaussian);
+	double sigma= pnl_vect_get(this->sigma_,assetIndex); 
+	//Compute the exponential argument
+	double expArg= sqrt(h)*scalarResult*sigma + h*(this->r_ - (sigma*sigma/2));
+	pnl_vect_free(&rowChol);
 
-	
-
-
-	
-
+	return currentPrice*exp(expArg);
 
 }
 
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 
-	//For each time t between 0 and T.
-	for(int t=0;t<=T;t= T/N){
-		
-		PnlVect *vectorGaussian;
-		vectorGaussian= pnl_vect_create(this->size_);
-		pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
-		//For each assets 
-		for(int d=0; d<this->size_; d++){
-
-			chol;
-
-			pnl_vect_mult_vect_term(,vectorGaussian);
-
-
-		}
-	}
+	
 
 }
 
