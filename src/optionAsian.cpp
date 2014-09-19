@@ -9,6 +9,7 @@ OptionAsian::OptionAsian(double T_, int TimeSteps_, int size_, double strike_):O
 	this->strike_=strike_;
 }
 
+
 OptionAsian::~OptionAsian(){}
 
 double OptionAsian::payoff(const PnlMat *path)

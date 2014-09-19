@@ -17,7 +17,8 @@ OptionBasket::OptionBasket(const double T_, const int timeSteps_, const int size
  * Destructeur de la classe OptionBasket
  */
 OptionBasket::~OptionBasket(){
-  pnl_vect_free(&(this->payoffCoeff_));
+  if (&(this->payoffCoeff_) != NULL)
+    pnl_vect_free(&(this->payoffCoeff_));
 }
 
 /**
