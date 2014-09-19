@@ -48,7 +48,6 @@ void BS::computeCholesky(PnlMat *chol,double rho_){
 
 }
 
-
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
 	
 	//Discretization step
@@ -100,27 +99,6 @@ double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVe
 
 }
 
-void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
-
-	
-
-}
-
-double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian){
-	//Compute the scalar product
-	PnlVect *rowChol;
-	rowChol= pnl_vect_create(this->size_);
-	*rowChol= pnl_vect_wrap_mat_row(this->chol,assetIndex);
-	double scalarResult= pnl_vect_scalar_prod(rowChol, vectorGaussian);
-	double sigma= pnl_vect_get(this->sigma_,assetIndex); 
-	//Compute the exponential argument
-	double expArg= sqrt(h)*scalarResult*sigma + h*(this->r_ - (sigma*sigma/2));
-	pnl_vect_free(&rowChol);
-
-	return currentPrice*exp(expArg);
-
-
-}
 
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 
@@ -137,8 +115,10 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 			MLET(path,i,j)=this->computeIteration(MGET(path,i-1,j),T/N,j,vectorGaussian);
 		}
 	}
+
 	pnl_vect_free(&vectorGaussian);
 }
+
 
 
 

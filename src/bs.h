@@ -75,10 +75,6 @@ public:
    * @param[out] computedPrice
    */
   double computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian);
-<<<<<<< HEAD
-
-=======
->>>>>>> 87752ff... Add computeIteration declaration
 
     
 };
