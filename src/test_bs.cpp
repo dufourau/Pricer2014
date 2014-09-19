@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 
   //TEST Constructor
   BS *b;
-  rho= 1.1;
+  rho= 0.3;
   r= 2.1;
   size=6;
   b = new BS(spot,sigma,rho,r,size);
