@@ -8,9 +8,8 @@ class OptionAsian :
 {
 public:
 	double strike_;
-	PnlVect *payoffCoeff_;
 
-	OptionAsian(double strike_, PnlVect *payoffCoeff_,double T_, int TimeSteps_, int size_);
+	OptionAsian(double T_, int TimeSteps_, int size_, double strike_);
 
 	~OptionAsian();
 

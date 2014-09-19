@@ -2,6 +2,11 @@
 #define _MC_H
 
 #include "optionBasket.h"
+#include "optionAsian.h"
+#include "optionBarrierLow.h"
+#include "optionBarrierUp.h"
+#include "optionBarrier.h"
+#include "optionPerformance.h"
 #include "bs.h"
 #include "pnl/pnl_random.h"
 #include "parser.h"
@@ -54,6 +59,7 @@ public:
    * @param[in] key contient le type de l'option
    * @param[in] P contient les données nécessaire pour 
    * la création de l'option
+   * @param[out] retourne la bonne instance d'option
    */
   Option* createOption(char* key, Param *P);
 };
