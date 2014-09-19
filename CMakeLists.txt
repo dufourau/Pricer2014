@@ -37,11 +37,14 @@ add_executable(parser-test src/parser.cpp src/test_parser.cpp)
 target_link_libraries(parser-test ${LIBS})
 install(TARGETS parser-test DESTINATION bin)
 
-
 # Testing BS
  add_executable(bs-test src/test_bs.cpp src/bs.cpp)
  target_link_libraries(bs-test ${LIBS})
  install(TARGETS bs-test DESTINATION bin)
+
+add_executable(option-test src/optionAsian.cpp src/option.cpp src/test_option.cpp)
+target_link_libraries(option-test ${LIBS})
+install(TARGETS option-test DESTINATION bin)
 
 # Add google test
 if(EXISTS /usr/src/gtest)
@@ -61,7 +64,9 @@ else(EXISTS /usr/src/gtest)
 endif(EXISTS /usr/src/gtest)
 
 # Link test executable against gtest & gtest_main
-add_executable(runUnitTests src/allTests.cpp src/optionBarrierLow.cpp src/optionAsian.cpp src/option.cpp test/option-test.cpp)
+
+add_executable(runUnitTests src/allTests.cpp src/optionBarrierLow.cpp src/option.cpp test/optionBarrierLow-test.cpp test/option-test.cpp)
+
 target_link_libraries(runUnitTests ${LIBS} gtest gtest_main)
 add_test(RunUnitTests runUnitTests)
 
@@ -74,6 +79,15 @@ add_test(
     COMMAND runUnitTests
 )
 
+
 # add_executable(mc-pricer src/parser.cpp src/pricer.cpp)
 # target_link_libraries(mc-pricer ${LIBS})
 # install(TARGETS mc-pricer DESTINATION bin)
+
+
+# Testing the option basket
+add_executable(optionBasket-test src/optionBasket.cpp src/option.cpp src/test-optionBasket.cpp)
+target_link_libraries(optionBasket-test ${LIBS})
+install(TARGETS optionBasket-test DESTINATION bin)
+
+
