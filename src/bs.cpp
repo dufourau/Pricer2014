@@ -50,6 +50,13 @@ void BS::computeCholesky(PnlMat *chol,double rho_){
 
 }
 
+void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
+
+
+	
+}
+
+
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
 	
 
