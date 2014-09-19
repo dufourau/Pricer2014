@@ -26,9 +26,6 @@ double OptionAsian::payoff(const PnlMat *path)
 	}
 	pnl_vect_free(&p);
 	double payoff = (sum_flow/this->TimeSteps_)-(this->strike_);
-	cout << sum_flow << "\n";
-	cout << payoff << "\n";
-	cout << this->strike_ << "\n";
 	
 	if (payoff<0.0) {
 		return 0.0;
