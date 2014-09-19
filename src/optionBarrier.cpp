@@ -14,9 +14,12 @@ OptionBarrier::OptionBarrier(const double T_, const int timeSteps_, const int si
 }
 
 OptionBarrier::~OptionBarrier(){
-  pnl_vect_free(&(this->payoffCoeff_));
-  pnl_vect_free(&(this->lowerBarrier_));
-  pnl_vect_free(&(this->upperBarrier_));
+  if (&(this->payoffCoeff_) != NULL)
+    pnl_vect_free(&(this->payoffCoeff_));
+  if (&(this->lowerBarrier_) != NULL)
+    pnl_vect_free(&(this->lowerBarrier_));
+  if (&(this->upperBarrier_) != NULL)
+    pnl_vect_free(&(this->upperBarrier_));
 }
 
 double OptionBarrier::payoff(const PnlMat *path)

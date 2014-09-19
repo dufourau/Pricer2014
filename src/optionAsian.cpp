@@ -12,7 +12,8 @@ OptionAsian::OptionAsian(double strike_, PnlVect *payoffCoeff_,double T_, int Ti
 
 OptionAsian::~OptionAsian()
 {
-	pnl_vect_free(&(payoffCoeff_));
+	if (&(payoffCoeff_) != NULL)
+		pnl_vect_free(&(payoffCoeff_));
 }
 
 double OptionAsian::payoff(const PnlMat *path)
