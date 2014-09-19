@@ -62,6 +62,7 @@ endif(EXISTS /usr/src/gtest)
 # Link test executable against gtest & gtest_main
 add_executable(runUnitTests 
     src/allTests.cpp
+    src/utils.cpp
     src/optionBarrierLow.cpp 
     src/optionBarrierUp.cpp 
     src/optionBarrier.cpp 
