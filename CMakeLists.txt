@@ -38,7 +38,7 @@ target_link_libraries(parser-test ${LIBS})
 install(TARGETS parser-test DESTINATION bin)
 
 # Testing BS
- add_executable(bs-test src/test_bs.cpp src/bs.cpp)
+ add_executable(bs-test src/test_bs.cpp src/bs.cpp src/parser.cpp)
  target_link_libraries(bs-test ${LIBS})
  install(TARGETS bs-test DESTINATION bin)
 

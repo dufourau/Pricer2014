@@ -65,7 +65,16 @@ public:
 
    */
   void computeCholesky(PnlMat *L, double rho_);
-
+  
+  /*
+   * Shift d'une trajectoire du sous-jacent
+   *
+   * @param[in]  currentPrice
+   * @param[in]  h
+   * @param[in]  assetIndex
+   * @param[out] computedPrice
+   */
+  double computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian);
 
 };
 
