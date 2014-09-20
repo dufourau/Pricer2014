@@ -59,27 +59,53 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 	vectorGaussian= pnl_vect_create(this->size_);
 	//Start by testing if t if a discretization time
 	if(fmod(t,h)== 0){
-		pnl_mat_clone(path,past);
+		pnl_mat_set_subblock(path,past,0,0);
 		int currentIndex= past->m;
 		//Loop over time: t+h to T
-		for(double i= t; i<= T ; i=i+h){
-			
+		for(double i= t; i< T ; i=i+h){	
 			pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
 			//Loop on assets
 			for(int j= 0; j < this->size_ ;j++){
 				//Get the currentPrice
 				double computedPrice;
-				double currentPrice= pnl_mat_get(path,currentIndex,j);
+				double currentPrice= pnl_mat_get(path,currentIndex-1,j);
 				//Compute the new and set it
 				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian);
-				currentIndex++;
+				pnl_mat_print(path);
 				pnl_mat_set(path,currentIndex,j,computedPrice);
 			}
+			currentIndex++;
 		}
 	}else{
+		//Copy past in path except for the last
+		pnl_mat_set_subblock(path,past,0,0);
 
-		pnl_mat_clone(path,past);
+		//Get the last row of past
+		PnlVect prices;
+		prices= pnl_vect_wrap_mat_row(past,past->m-1);
+		int currentIndex= past->m;
+		int currentTime= currentIndex*h;;
+		//Loop over time: currentTime to T
+		for(double i= currentTime; i< T ; i=i+h){
+			pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
+			//Loop on assets
+			for(int j= 0; j < this->size_ ;j++){
+				//Get the currentPrice
+				double computedPrice;
+				if(currentIndex != past->m ){
 
+					double currentPrice= pnl_mat_get(path,currentIndex-2,j);
+					//Compute the new and set it
+					computedPrice= computeIteration(currentPrice,h,j,vectorGaussian);
+				}else{
+					double currentPrice= GET(&prices,j);
+					//Compute the new and set it with a different step
+					computedPrice= computeIteration(currentPrice,h-t+currentTime,j,vectorGaussian);
+				}
+				pnl_mat_set(path,currentIndex-1,j,computedPrice);
+			}
+			currentIndex++;
+		}
 
 	}
 	pnl_vect_free(&vectorGaussian);
@@ -91,15 +117,13 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 
 double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian){
 	//Compute the scalar product
-	PnlVect *rowChol;
-	rowChol= pnl_vect_create(this->size_);
-	*rowChol= pnl_vect_wrap_mat_row(this->chol,assetIndex);
-	double scalarResult= pnl_vect_scalar_prod(rowChol, vectorGaussian);
+	PnlVect rowChol;
+	rowChol= pnl_vect_wrap_mat_row(this->chol,assetIndex);
+	double scalarResult= pnl_vect_scalar_prod(&rowChol, vectorGaussian);
 	double sigma= pnl_vect_get(this->sigma_,assetIndex); 
 	//Compute the exponential argument
 	double expArg= sqrt(h)*scalarResult*sigma + h*(this->r_ - (sigma*sigma/2));
-	pnl_vect_free(&rowChol);
-
+	
 	return currentPrice*exp(expArg);
 
 }
