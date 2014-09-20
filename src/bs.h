@@ -22,7 +22,7 @@ public:
    * Génère une trajectoire du modèle et la stocke dans path
    *
    * @param[out] path contient une trajectoire du modèle.
-   * C'est une matrice de taille d x (N+1)
+   * C'est une matrice de taille (N+1) x d
    * @param[in] T  maturité
    * @param[in] N nombre de dates de constatation
    */
@@ -33,7 +33,7 @@ public:
    * passé jusqu' à la date t
    *
    * @param[out] path  contient une trajectoire du sous-jacent
-   * donnée jusqu'à l'instant t par la matrice past
+   * donnée jusqu'à l'instant T par la matrice past
    * @param[in] t date jusqu'à laquelle on connait la trajectoire
    * t n'est pas forcément une date de discrétisation
    * @param[in] N nombre de pas de constatation
