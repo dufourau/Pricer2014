@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 MonteCarlo::MonteCarlo(Param* P){
   int option_size, timestep;
   PnlVect *spot;
@@ -103,10 +104,19 @@ Option* MonteCarlo::createOption(Param *P){
 void MonteCarlo::price(double &prix, double &ic){
   double coeffActu = exp(- (mod_->r_ * opt_->T_) );
   //Matrix of assets
+
   //Initialize with spot
   PnlMat* path;
   path= pnl_mat_create(opt_->TimeSteps_+1,(this->mod_)->size_);
+<<<<<<< HEAD
+
+  //PnlMat* path = pnl_mat_new();
+    
+ 
+  mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
+=======
   
+>>>>>>> c742a5e4a86ff7f3e04156cbbd9db8b4db362c0b
   //Calcul du payOff   
   double payOffOption;
   double mean_payOffSquare;
