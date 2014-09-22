@@ -132,6 +132,8 @@ void MonteCarlo::price(double &prix, double &ic){
   double cst = exp(- 2 * (mod_->r_ * opt_->T_));
   
   double varEstimator = cst * (mean_payOffSquare - (payOffOption*payOffOption));
+  
+  //Print estimator variance on screen : To be remove ?
   cout<<"Var Estimator: "<<varEstimator<<endl;
   
   ic = (prix + 1.96*sqrt(varEstimator)/sqrt(this->samples_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(this->samples_));
@@ -149,11 +151,35 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
   //Matrix of assets
   PnlMat* path = pnl_mat_new();
   path= pnl_mat_create(opt_->TimeSteps_+1,(this->mod_)->size_);
-  mod_->asset(path, t, opt_->TimeSteps_, opt_->T_, this->rng, past);
   
-  //calcul du payoff
-  double payOffOption = opt_->payoff(path);
+  //Calcul du payOff   
+  double payOffOption;
+  double mean_payOffSquare;
+  double tmp;
+  
+  for(int m=1; m<=this->samples_; m++){
+    mod_->asset(path, t, opt_->TimeSteps_, opt_->T_, this->rng, past);
+    tmp = opt_->payoff(path);
+    payOffOption += tmp;
+    mean_payOffSquare += tmp*tmp;
+  }
+  
+  payOffOption  = payOffOption/this->samples_;
+  mean_payOffSquare = mean_payOffSquare/this->samples_;
   
   //calcul du prix de l'option en t>0
   prix = coeffActu * payOffOption;
+
+  //Free path
+  pnl_mat_free(&path);
+
+  //Calcul de la largeur de l'intervalle de confinace
+  double cst = exp(- 2 * (mod_->r_ * (opt_->T_ - t) ) );
+  
+  double varEstimator = cst * (mean_payOffSquare - (payOffOption*payOffOption));
+  
+  //Print estimator variance on screen : To be remove ?
+  cout<<"Var Estimator: "<<varEstimator<<endl;
+  
+  ic = (prix + 1.96*sqrt(varEstimator)/sqrt(this->samples_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(this->samples_));
 }
