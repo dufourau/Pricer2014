@@ -88,15 +88,15 @@ void MonteCarlo::price(double &prix, double &ic){
   
   double varEstimator;
   
-  for(int i=0; i<mod_->size; i++){
+  for(int i=0; i<mod_->size_; i++){
     varEstimator += payOffOption*payOffOption;
   }
   
-  varEstimator = varEstimator/mod_->size;
+  varEstimator = varEstimator/mod_->size_;
   varEstimator -= payOffOption*payOffOption;
   varEstimator = varEstimator*cst;
   
-  ic = (prix + 1.96*sqrt(varEstimator)/sqrt(mod_->size)) - (prix - 1.96*sqrt(varEstimator)/sqrt(mod_->size));
+  ic = (prix + 1.96*sqrt(varEstimator)/sqrt(mod_->size_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(mod_->size_));
   
 }
 
@@ -109,12 +109,12 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
   double coeffActu = exp(- (mod_->r_ * (opt_->T_ - t)) );
   
   //Matrix of assets
-  pnlmat* path = pnl_mat_new();
+  PnlMat* path = pnl_mat_new();
   
   mod_->asset(path, t, opt_->TimeSteps_, opt_->T_, this->rng, past);
   
   //calcul du payoff
-  double payOffOption = opt->payoff(path);
+  double payOffOption = opt_->payoff(path);
   
   //calcul du prix de l'option en t>0
   prix = coeffActu * payOffOption;
