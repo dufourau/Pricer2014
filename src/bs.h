@@ -74,9 +74,9 @@ public:
    * @param[in]  assetIndex
    * @param[out] computedPrice
    */
-
   double computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian);
 
+    
 };
 
 
