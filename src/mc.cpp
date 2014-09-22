@@ -9,7 +9,7 @@ MonteCarlo::MonteCarlo(Param* P){
   PnlVect *spot;
   PnlVect *sigma;
   double rho, r, maturity;
-  P->extract("option_size", option_size);
+  P->extract("option size", option_size);
   P->extract("spot", spot, option_size);
   P->extract("volatility", sigma, option_size);
   P->extract("interest rate", r);
@@ -102,16 +102,21 @@ void MonteCarlo::price(double &prix, double &ic){
   double coeffActu = exp(- (mod_->r_ * opt_->T_) );
   
   //Matrix of assets
-  PnlMat* path = pnl_mat_new();
-  
+  //Initialize with spot
+  PnlMat* path;
+  path= pnl_mat_create(opt_->TimeSteps_+1,(this->mod_)->size_);
   mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
   
   //Calcul du payOff   
   double payOffOption = opt_->payoff(path);
   
+
   //Calcul du prix de l'option en t=0
   prix = coeffActu * payOffOption;
-  
+
+
+  //Free path
+  pnl_mat_free(&path);
   //Calcul de la largeur de l'intervalle de confinace
   double cst = exp(- 2 * (mod_->r_ * opt_->T_));
   
@@ -139,7 +144,7 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
   
   //Matrix of assets
   PnlMat* path = pnl_mat_new();
-  
+  path= pnl_mat_create(opt_->TimeSteps_+1,(this->mod_)->size_);
   mod_->asset(path, t, opt_->TimeSteps_, opt_->T_, this->rng, past);
   
   //calcul du payoff

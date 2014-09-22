@@ -135,6 +135,10 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 
 	//For each time t between 0 and T.
 	assert(N!=0);
+	//Initialize the first path row with the spot prices
+	for(int j=0; j<this->size_; j++){
+      MLET(path,0,j)= GET(this->spot_,j);
+  	}
 	PnlVect *vectorGaussian;
 	vectorGaussian= pnl_vect_create(this->size_);
 
