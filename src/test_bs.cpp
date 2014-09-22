@@ -14,16 +14,9 @@ int main(int argc, char **argv)
   int size;
   char *infile = argv[1];
   Param *P = new Parser(infile);
-  //Test mc
-  MonteCarlo *mc;
-  mc= new MonteCarlo(P);
-  double prix;
-  double ic;
-
-  mc->price(prix,ic);
-  cout<<"price"<<prix<<endl;
-  cout<<"ic"<<ic<<endl;
-  /*
+ 
+  
+  
   P->extract("maturity", T);
   P->extract("option size", size);
   P->extract("spot", spot, size);
@@ -35,13 +28,11 @@ int main(int argc, char **argv)
   //TEST Constructor
   BS *b;
   b = new BS(spot,sigma,rho,r,size);
-  /*
-  pnl_vect_free(&spot);
-  pnl_vect_free(&sigma);
-  */
+  
+  
   //TEST gaussien vector
   //Initiliaze the generator
-  /*
+  
   PnlRng *rng;
   rng= pnl_rng_create (PNL_RNG_MERSENNE);
   pnl_rng_sseed (rng, 0);
@@ -50,25 +41,35 @@ int main(int argc, char **argv)
   PnlMat *past_path;
 
   b->asset(path,3,3,rng);
-  cout << "path matrix with call function baton:"<<endl;
-  pnl_mat_print(path);
-
+  
   //Copy the result
   past_path= pnl_mat_copy(path);
   pnl_mat_free(&path);
-  path= pnl_mat_create(6,size);
-  b->asset(path,3,6,5,rng,past_path);
-  cout << "path matrix with call function autre:"<<endl;
-  pnl_mat_print(path);
+  //path= pnl_mat_create(6,size);
+  //b->asset(path,3,6,5,rng,past_path);
+ 
+  //Test mc
+  MonteCarlo *mc;
+  mc= new MonteCarlo(P);
+  double prix;
+  double ic;
+  mc->price(prix,ic);
+  cout<<"price à 0"<<prix<<endl;
+  cout<<"ic à 0"<<ic<<endl;
+  //Try with t=3
+  //mc->price(past_path,3,prix,ic);
 
-  pnl_mat_free(&path);
+  //cout<<"price à t"<<prix<<endl;
+  //cout<<"ic à t"<<ic<<endl;
+
+
   pnl_mat_free(&past_path);
   pnl_rng_free(&rng);
   pnl_vect_free(&spot);
   pnl_vect_free(&sigma);
   delete P;
   delete b;
-  */
+  
 
 
 

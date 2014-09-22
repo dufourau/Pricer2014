@@ -3,6 +3,7 @@
 #include <cstring>
 #include <math.h>
 
+using namespace std;
 
 MonteCarlo::MonteCarlo(Param* P){
   int option_size, timestep;
@@ -28,10 +29,11 @@ MonteCarlo::MonteCarlo(Param* P){
 
 MonteCarlo::~MonteCarlo(){
   delete this->mod_;
+  pnl_rng_free(&(this->rng));
 }
 
 /**
- * Cette méthode crée la bonne instance d'option
+ * Cette méthode crée la bonne instance d'option0
  */
 Option* MonteCarlo::createOption(Param *P){
   
@@ -100,21 +102,15 @@ Option* MonteCarlo::createOption(Param *P){
  */
 void MonteCarlo::price(double &prix, double &ic){
   double coeffActu = exp(- (mod_->r_ * opt_->T_) );
-  
   //Matrix of assets
   //Initialize with spot
   PnlMat* path;
   path= pnl_mat_create(opt_->TimeSteps_+1,(this->mod_)->size_);
   mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
-  
   //Calcul du payOff   
   double payOffOption = opt_->payoff(path);
-  
-
   //Calcul du prix de l'option en t=0
   prix = coeffActu * payOffOption;
-
-
   //Free path
   pnl_mat_free(&path);
   //Calcul de la largeur de l'intervalle de confinace
@@ -129,7 +125,7 @@ void MonteCarlo::price(double &prix, double &ic){
   varEstimator = varEstimator/mod_->size_;
   varEstimator -= payOffOption*payOffOption;
   varEstimator = varEstimator*cst;
-  
+  cout << "varEstimator"<< varEstimator<<endl;
   ic = (prix + 1.96*sqrt(varEstimator)/sqrt(mod_->size_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(mod_->size_));
   
 }
