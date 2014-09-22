@@ -66,17 +66,56 @@ Option* MonteCarlo::createOption(char* key, Param *P){
 }
 
 
+/**
+ * Calcul le prix de l'option en t=0 et la largeur de son intervalle de confinace
+ */
 void MonteCarlo::price(double &prix, double &ic){
-    double coeffActu = exp(- (mod_->r_ * opt_->T_) );
+  double coeffActu = exp(- (mod_->r_ * opt_->T_) );
   
-    //Matrix of assets
-    PnlMat* path = pnl_mat_new();
-   
-    mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
- 
-    //Calcul du payOff   
-    double payOffOption = opt_->payoff(path);
-    
-    prix = coeffActu * payOffOption;
+  //Matrix of assets
+  PnlMat* path = pnl_mat_new();
+  
+  mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
+  
+  //Calcul du payOff   
+  double payOffOption = opt_->payoff(path);
+  
+  //Calcul du prix de l'option en t=0
+  prix = coeffActu * payOffOption;
+  
+  //Calcul de la largeur de l'intervalle de confinace
+  double cst = exp(- 2 * (mod_->r_ * opt_->T_));
+  
+  double varEstimator;
+  
+  for(int i=0; i<mod_->size; i++){
+    varEstimator += payOffOption*payOffOption;
+  }
+  
+  varEstimator = varEstimator/mod_->size;
+  varEstimator -= payOffOption*payOffOption;
+  varEstimator = varEstimator*cst;
+  
+  ic = (prix + 1.96*sqrt(varEstimator)/sqrt(mod_->size)) - (prix - 1.96*sqrt(varEstimator)/sqrt(mod_->size));
+  
+}
 
+
+/**
+ * Calcul le prix de l'option en t>0 
+ */
+void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
+  
+  double coeffActu = exp(- (mod_->r_ * (opt_->T_ - t)) );
+  
+  //Matrix of assets
+  pnlmat* path = pnl_mat_new();
+  
+  mod_->asset(path, t, opt_->TimeSteps_, opt_->T_, this->rng, past);
+  
+  //calcul du payoff
+  double payOffOption = opt->payoff(path);
+  
+  //calcul du prix de l'option en t>0
+  prix = coeffActu * payOffOption;
 }
