@@ -1,10 +1,14 @@
 #include <iostream>
 #include "bs.h"
+#include "parser.h"
+
 
 using namespace std;
 
 int main(int argc, char **argv)
 {
+  char *infile = argv[1];
+  Param *P = new Parser(infile);
   //Initialize BS parameters
   double rho, r;
   PnlVect *spot, *sigma;
