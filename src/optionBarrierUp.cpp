@@ -32,5 +32,5 @@ double OptionBarrierUp::payoff(const PnlMat *path)
     }
   }
 
-  return utils::computeBasketPayoff(path, this->payoffCoeff_, this->T_, this->strike_);
+  return utils::computePayoff(path, this->payoffCoeff_, this->TimeSteps_, this->strike_);
 }

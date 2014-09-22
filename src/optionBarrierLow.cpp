@@ -24,13 +24,13 @@ double OptionBarrierLow::payoff(const PnlMat *path)
   assert(lowerBarrier_->size == path->n);
 	for (int i = 0; i < path->m; ++i)
 	{
-    for (int d = 0; d < path->n; ++d)
-    {
-      if (MGET(path, i, d) < GET(this->lowerBarrier_, d)){
-        return 0;
-      }
-    }
+      for (int d = 0; d < path->n; ++d)
+        {
+          if (MGET(path, i, d) < GET(this->lowerBarrier_, d)){
+            return 0;
+          }
+        }
 	}
 
-  return utils::computeBasketPayoff(path, this->payoffCoeff_, this->T_, this->strike_);
+  return utils::computePayoff(path, this->payoffCoeff_, this->TimeSteps_, this->strike_);
 }

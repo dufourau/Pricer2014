@@ -5,12 +5,12 @@
 #include <iostream>
 
 TEST (OptionBarrierLowTest, PayoffNotNull) {
-  double T_ = 3.0;
-  int timeSteps_ = 1;
+  double T_ = 4.5;
+  int timeSteps_ = 2;
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
+  PnlMat* path =  pnl_mat_create_from_list (timeSteps_+1, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
   PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
 
   OptionBarrierLow ob = OptionBarrierLow(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier);
@@ -24,12 +24,12 @@ TEST (OptionBarrierLowTest, PayoffNotNull) {
 }
 
 TEST (OptionBarrierLowTest, PayoffNull) {
-  double T_ = 3.0;
-  int timeSteps_ = 1;
+  double T_ = 4.5;
+  int timeSteps_ = 2;
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
+  PnlMat* path =  pnl_mat_create_from_list (timeSteps_+1, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
   PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
 
   OptionBarrierLow ob = OptionBarrierLow(T_,timeSteps_,size_,strike_,coeffPayoff, lowerBarrier);
@@ -43,12 +43,12 @@ TEST (OptionBarrierLowTest, PayoffNull) {
 }
 
 TEST (OptionBarrierUpTest, PayoffNull) {
-  double T_ = 3.0;
-  int timeSteps_ = 1;
+  double T_ = 4.5;
+  int timeSteps_ = 2;
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
+  PnlMat* path =  pnl_mat_create_from_list (timeSteps_+1, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
   PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
 
   OptionBarrierUp ob = OptionBarrierUp(T_,timeSteps_,size_,strike_,coeffPayoff, upperBarrier);
@@ -62,12 +62,12 @@ TEST (OptionBarrierUpTest, PayoffNull) {
 }
 
 TEST (OptionBarrierUpTest, PayoffNotNull) {
-  double T_ = 3.0;
-  int timeSteps_ = 1;
+  double T_ = 4.5;
+  int timeSteps_ = 2;
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
+  PnlMat* path =  pnl_mat_create_from_list (timeSteps_+1, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
   PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
 
   OptionBarrierUp ob = OptionBarrierUp(T_,timeSteps_,size_,strike_,coeffPayoff, upperBarrier);
@@ -81,12 +81,12 @@ TEST (OptionBarrierUpTest, PayoffNotNull) {
 }
 
 TEST (OptionBarrierTest, PayoffNotNull) {
-  double T_ = 3.0;
-  int timeSteps_ = 1;
+  double T_ = 4.5;
+  int timeSteps_ = 2;
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
+  PnlMat* path =  pnl_mat_create_from_list (timeSteps_+1, size_, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
   PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
   PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 0.0, 0.0, 0.0);
 
@@ -102,12 +102,12 @@ TEST (OptionBarrierTest, PayoffNotNull) {
 }
 
 TEST (OptionBarrierTest, PayoffNull) {
-  double T_ = 3.0;
-  int timeSteps_ = 1;
+  double T_ = 4.5;
+  int timeSteps_ = 2;
   int size_ = 3;
   double strike_ = 5.0;
   PnlVect* coeffPayoff = pnl_vect_create_from_list (size_, 2.0, 2.0, 2.0);
-  PnlMat* path =  pnl_mat_create_from_list (T_, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
+  PnlMat* path =  pnl_mat_create_from_list (timeSteps_+1, size_, 2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5);
   PnlVect* lowerBarrier = pnl_vect_create_from_list(size_, 2.0, 2.0, 2.0);
   PnlVect* upperBarrier = pnl_vect_create_from_list(size_, 0.0, 0.0, 0.0);
 
