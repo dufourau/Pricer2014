@@ -106,27 +106,35 @@ void MonteCarlo::price(double &prix, double &ic){
   //Initialize with spot
   PnlMat* path;
   path= pnl_mat_create(opt_->TimeSteps_+1,(this->mod_)->size_);
-  mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
+  
   //Calcul du payOff   
-  double payOffOption = opt_->payoff(path);
+  double payOffOption;
+  double mean_payOffSquare;
+  double tmp;
+  
+  for(int m=1; m<=this->samples_; m++){
+    mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
+    tmp = opt_->payoff(path);
+    payOffOption += tmp;
+    mean_payOffSquare += tmp*tmp;
+  }
+  
+  payOffOption  = payOffOption/this->samples_;
+  mean_payOffSquare = mean_payOffSquare/this->samples_;
+
   //Calcul du prix de l'option en t=0
   prix = coeffActu * payOffOption;
+
   //Free path
   pnl_mat_free(&path);
+
   //Calcul de la largeur de l'intervalle de confinace
   double cst = exp(- 2 * (mod_->r_ * opt_->T_));
   
-  double varEstimator;
+  double varEstimator = cst * (mean_payOffSquare - (payOffOption*payOffOption));
+  cout<<"Var Estimator: "<<varEstimator<<endl;
   
-  for(int i=0; i<mod_->size_; i++){
-    varEstimator += payOffOption*payOffOption;
-  }
-  
-  varEstimator = varEstimator/mod_->size_;
-  varEstimator -= payOffOption*payOffOption;
-  varEstimator = varEstimator*cst;
-  cout << "varEstimator"<< varEstimator<<endl;
-  ic = (prix + 1.96*sqrt(varEstimator)/sqrt(mod_->size_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(mod_->size_));
+  ic = (prix + 1.96*sqrt(varEstimator)/sqrt(this->samples_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(this->samples_));
   
 }
 
