@@ -64,6 +64,7 @@ endif(EXISTS /usr/src/gtest)
 add_executable(runUnitTests 
     src/allTests.cpp
     src/utils.cpp
+    src/bs.cpp
     src/optionBarrierLow.cpp 
     src/optionBarrierUp.cpp 
     src/optionBarrier.cpp

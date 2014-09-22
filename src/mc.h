@@ -20,6 +20,10 @@ public:
   double h_; /*! pas de différence finie */
   int samples_; /*! nombre de tirages Monte Carlo */
 
+  MonteCarlo(Param* P);
+
+  ~MonteCarlo();
+
   /**
    * Calcule le prix de l'option à la date 0
    *
@@ -61,7 +65,7 @@ public:
    * la création de l'option
    * @param[out] retourne la bonne instance d'option
    */
-  Option* createOption(char* key, Param *P);
+  static Option* createOption(Param *P);
 };
 
 #endif /* _MC_H */
