@@ -67,6 +67,21 @@ int main(int argc, char **argv)
   //cout<<"price à t"<<refprix<<endl;
   //cout<<"ic à t"<<refic<<endl;
   
+  // Test for shift asset
+  BS* bs = new BS(spot,sigma,rho,r,size,NULL);
+  PnlMat* shift_path = pnl_mat_new();
+  bs->shift_asset(shift_path, path, path->n-1, 1, 3, 1);
+  cout << "\n\n===============================================\nPath\n";
+  pnl_mat_print(path);
+
+  cout << "\n\n===============================================\nShifted path\n";
+  pnl_mat_print(shift_path);
+
+  PnlVect *delta = pnl_vect_create(path->n);
+  mc->delta(past_path, 1, delta, NULL);
+  cout << "\n\n===============================================\nDelta\n";
+  pnl_vect_print(delta);
+
 
   //pnl_mat_free(&past_path);
   pnl_rng_free(&rng);

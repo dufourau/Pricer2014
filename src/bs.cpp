@@ -182,13 +182,3 @@ void BS::simul_market(PnlMat *path, double T, int H, PnlRng *rng){
 	}
 	pnl_vect_free(&vectorGaussian);
 }
-
-
-
-
-
-
-
-
-
-
