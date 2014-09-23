@@ -23,12 +23,6 @@ int main(int argc, char **argv)
   P->extract("volatility", sigma, size);
   P->extract("interest rate", r);
   P->extract("correlation",rho);
-
-
-  //TEST Constructor
-  //BS *b;
-  //b = new BS(spot,sigma,rho,r,size,trend);
-  
   
   //TEST gaussien vector
   //Initiliaze the generator
@@ -39,75 +33,26 @@ int main(int argc, char **argv)
   PnlMat *path;
   path= pnl_mat_create(7,size);
   PnlMat *past_path;
-
-  /*b->asset(path,1,6,rng);
-  cout<<"path avant"<<endl;
-  pnl_mat_print(path);
-  //Copy the result
-  past_path= pnl_mat_copy(path);
-  pnl_mat_free(&path);
-<<<<<<< HEAD
-  //path= pnl_mat_create(13,size);
-  //b->asset(path,3,6,5,rng,past_path);
-  */
-  //Test mc
-
-  path= pnl_mat_create(6,size);
-  b->asset(path,3,6,5,rng,past_path);
- 
   //Test mc
   MonteCarlo *mc;
   mc= new MonteCarlo(P);
   double prix;
   double ic;
-  //mc->price(prix,ic);
-  cout<<"price à 0"<<prix<<endl;
-  cout<<"ic à 0"<<ic<<endl;
-  //Try with t=3
 
-  //mc->price(past_path,0.6,refprix,refic);
-  //cout<<"price à t"<<refprix<<endl;
-  //cout<<"ic à t"<<refic<<endl;
+  mc->mod_->asset(path,1,6,rng);
+  cout<<"path avant"<<endl; 
+  //Copy the result
+  past_path= pnl_mat_copy(path);
+  pnl_mat_free(&path);
+  pnl_mat_print(past_path);
+  PnlVect *delta;
+  delta= pnl_vect_create(size);
   
-  // Test for shift asset
-  BS* bs = new BS(spot,sigma,rho,r,size,NULL);
-  PnlMat* shift_path = pnl_mat_new();
-
-  path= pnl_mat_create(4,size);
-  past_path = pnl_mat_copy(path);
-  bs->asset(path,3,6,5,rng,past_path);
-  bs->shift_asset(shift_path, path, path->n-1, 1, 3, 1);
-  cout << "\n\n===============================================\nPath\n";
-  pnl_mat_print(path);
-
-  cout << "\n\n===============================================\nShifted path\n";
-  pnl_mat_print(shift_path);
-  cout<<"price à t"<<prix<<endl;
-  cout<<"ic à t"<<ic<<endl;
-
-  PnlVect *delta = pnl_vect_create(path->n);
-  mc->delta(past_path, 1, delta, NULL);
-  cout << "\n\n===============================================\nDelta\n";
+  mc->delta(past_path,0.5, delta, NULL);
   pnl_vect_print(delta);
-
-
-  // Test for shift asset
-  PnlMat* shift_path = pnl_mat_new();
-  b->shift_asset(shift_path, path, path->n-1, 1, 3, 1);
-  cout << "\n\n===============================================\nPath\n";
-  pnl_mat_print(path);
-
-  cout << "\n\n===============================================\nShifted path\n";
-  pnl_mat_print(shift_path);
-
-  PnlVect *delta = pnl_vect_create(path->n);
-  mc->delta(past_path, 1, delta, NULL);
-  cout << "\n\n===============================================\nDelta\n";
-  pnl_vect_print(delta);
-
+  
   pnl_vect_free(&delta);
   pnl_mat_free(&path);
-  pnl_mat_free(&shift_path);
   pnl_mat_free(&past_path);
   pnl_rng_free(&rng);
   pnl_vect_free(&spot);

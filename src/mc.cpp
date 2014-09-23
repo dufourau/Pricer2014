@@ -196,12 +196,15 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
   for (int i = 0; i < nbAsset; ++i)
   {
     double sum = 0;
-    PnlMat* path = pnl_mat_create(this->opt_->T_+1, nbAsset);
+    PnlMat* path = pnl_mat_create(this->opt_->TimeSteps_+1, nbAsset);
+
     for (int j = 0; j < this->samples_; ++j)
     {
+
       this->mod_->asset(path, t, this->opt_->TimeSteps_, this->opt_->T_, this->rng, past);
-      PnlMat* path_shift_up = pnl_mat_create(this->opt_->T_+1, nbAsset);
-      PnlMat* path_shift_down = pnl_mat_create(this->opt_->T_+1, nbAsset);
+      //this->mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
+      PnlMat* path_shift_up = pnl_mat_create(this->opt_->TimeSteps_+1, nbAsset);
+      PnlMat* path_shift_down = pnl_mat_create(this->opt_->TimeSteps_+1, nbAsset);
       this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, this->opt_->TimeSteps_);
       this->mod_->shift_asset(path_shift_down, path, i, -this->h_, t, this->opt_->TimeSteps_);
       pnl_mat_eq(path_shift_up, path_shift_down);
@@ -212,36 +215,7 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
       // pnl_mat_print(path_shift_down);
       
       sum += this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
-      // cout << "Sum = " << sum << endl;
-    }
-    LET(delta, i) = sum * exp(this->mod_->r_ * (this->opt_->T_ - t) / (2 * this->samples_ * MGET(past, past->m-1, i) * this->h_));
-  }
-}
-
-void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic){
-
-  int nbAsset = this->opt_->size_;
-
-  for (int i = 0; i < nbAsset; ++i)
-  {
-    double sum = 0;
-    PnlMat* path = pnl_mat_create(this->opt_->T_+1, nbAsset);
-    for (int j = 0; j < this->samples_; ++j)
-    {
-      this->mod_->asset(path, t, this->opt_->TimeSteps_, this->opt_->T_, this->rng, past);
-      PnlMat* path_shift_up = pnl_mat_create(this->opt_->T_+1, nbAsset);
-      PnlMat* path_shift_down = pnl_mat_create(this->opt_->T_+1, nbAsset);
-      this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, this->opt_->TimeSteps_);
-      this->mod_->shift_asset(path_shift_down, path, i, -this->h_, t, this->opt_->TimeSteps_);
-      pnl_mat_eq(path_shift_up, path_shift_down);
-
-      // cout << "\n=\n=\n=Path shift up \n\n\n";
-      // pnl_mat_print(path_shift_up);
-      // cout << "\n=\n=\n=Path shift down \n\n\n";
-      // pnl_mat_print(path_shift_down);
-      
-      sum += this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
-      // cout << "Sum = " << sum << endl;
+      //cout << "Sum = " << sum << endl;
     }
     LET(delta, i) = sum * exp(this->mod_->r_ * (this->opt_->T_ - t) / (2 * this->samples_ * MGET(past, past->m-1, i) * this->h_));
   }
