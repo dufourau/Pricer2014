@@ -71,7 +71,7 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 				double currentPrice= pnl_mat_get(path,currentIndex-1,j);
 				//Compute the new and set it
 				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian);
-				pnl_mat_print(path);
+				//pnl_mat_print(path);
 				pnl_mat_set(path,currentIndex,j,computedPrice);
 			}
 			currentIndex++;
@@ -132,7 +132,6 @@ double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVe
 
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 
-
 	//For each time t between 0 and T.
 	assert(N!=0);
 	//Initialize the first path row with the spot prices
@@ -153,14 +152,11 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 	pnl_vect_free(&vectorGaussian);
 }
 
-
-
-
-
-
-
-
-
-
-
-
+  void BS::shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep){
+  	pnl_mat_clone(shift_path, path);
+		int index = (int) t/timestep;
+		for (int i = index+1 ; i < path->m; ++i)
+		{
+			MLET(shift_path, i, d) *= (1+h);
+		}
+  }
