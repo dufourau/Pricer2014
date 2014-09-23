@@ -62,8 +62,6 @@ public:
    * Compute Cholesky factorization for the identity matrix
    * @param[out] Return the cholesky factorized matrix
    * @param[in] rho_ paramètre de corrélation
-   * @param[in] rho_ param�tre de corrélation
-
    */
   void computeCholesky(PnlMat *L, double rho_);
   
@@ -83,7 +81,6 @@ public:
    * @param[in]  H
    */
   void simul_market(PnlMat *path, double T, int H, PnlRng *rng);
-
   
 };
 

@@ -70,6 +70,10 @@ int main(int argc, char **argv)
   // Test for shift asset
   BS* bs = new BS(spot,sigma,rho,r,size,NULL);
   PnlMat* shift_path = pnl_mat_new();
+
+  path= pnl_mat_create(4,size);
+  past_path = pnl_mat_copy(path);
+  bs->asset(path,3,6,5,rng,past_path);
   bs->shift_asset(shift_path, path, path->n-1, 1, 3, 1);
   cout << "\n\n===============================================\nPath\n";
   pnl_mat_print(path);
@@ -81,7 +85,6 @@ int main(int argc, char **argv)
   mc->delta(past_path, 1, delta, NULL);
   cout << "\n\n===============================================\nDelta\n";
   pnl_vect_print(delta);
-
 
   //pnl_mat_free(&past_path);
   pnl_rng_free(&rng);
