@@ -21,6 +21,7 @@ int main(int argc, char **argv)
   P->extract("volatility", sigma, size);
   P->extract("interest rate", r);
   P->extract("correlation",rho);
+  
   trend=pnl_vect_create(size);
   for(int i=0;i<size;i++){
     LET(trend,i)=0.1;
@@ -35,13 +36,18 @@ int main(int argc, char **argv)
   pnl_rng_sseed (rng, 0);
   PnlMat *path;
   path= pnl_mat_create(4,size);
-
-  b->simul_market(path,3,3,rng);
-  cout << "path matrix with call function baton:"<<endl;
-  pnl_mat_print(path);
-
+  MonteCarlo *mc;
+  mc= new MonteCarlo(P);
+  PnlVect *V;
+  V= pnl_vect_create(4);
+  mc->freeRiskInvestedPart(V,3,3);
+  cout << "Price vector V: "<<endl;
+  pnl_vect_print(V);
+  //b->simul_market(path,3,3,rng);
+  //cout << "path"<<endl;
+  //pnl_mat_print(path);
   pnl_vect_free(&spot);
   pnl_vect_free(&sigma);
-  pnl_vect_free(&trend);
+  //pnl_vect_free(&trend);
   exit(0);
 }
