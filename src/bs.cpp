@@ -10,11 +10,12 @@ using namespace std;
 
 
 //Blacḱ&Scholes Constructor
-BS::BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_)
+BS::BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_,PnlVect *trend)
 {
 	this->spot_= spot_;
 	this->sigma_= sigma_;
 	this->rho_= rho_;
+	this->trend=trend;
 	this->r_= r_;
 	this->size_= size_;
 	//Compute a the cholesky factorization 
@@ -70,7 +71,7 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 				double computedPrice;
 				double currentPrice= pnl_mat_get(path,currentIndex-1,j);
 				//Compute the new and set it
-				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian);
+				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian, false);
 				pnl_mat_print(path);
 				pnl_mat_set(path,currentIndex,j,computedPrice);
 			}
@@ -96,11 +97,11 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 
 					double currentPrice= pnl_mat_get(path,currentIndex-2,j);
 					//Compute the new and set it
-					computedPrice= computeIteration(currentPrice,h,j,vectorGaussian);
+					computedPrice= computeIteration(currentPrice,h,j,vectorGaussian,false);
 				}else{
 					double currentPrice= GET(&prices,j);
 					//Compute the new and set it with a different step
-					computedPrice= computeIteration(currentPrice,h-t+currentTime,j,vectorGaussian);
+					computedPrice= computeIteration(currentPrice,h-t+currentTime,j,vectorGaussian,false);
 				}
 				pnl_mat_set(path,currentIndex-1,j,computedPrice);
 			}
@@ -115,19 +116,23 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 }
 
 
-double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian){
+double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian, bool useTrend){
 	//Compute the scalar product
 	PnlVect rowChol;
 	rowChol= pnl_vect_wrap_mat_row(this->chol,assetIndex);
 	double scalarResult= pnl_vect_scalar_prod(&rowChol, vectorGaussian);
 	double sigma= pnl_vect_get(this->sigma_,assetIndex); 
 	//Compute the exponential argument
-	double expArg= sqrt(h)*scalarResult*sigma + h*(this->r_ - (sigma*sigma/2));
-	
+	double expArg;
+	if (useTrend){
+		double mu=pnl_vect_get(this->trend,assetIndex);
+		expArg= sqrt(h)*scalarResult*sigma + h*(mu - (sigma*sigma/2));
+	}else{
+		expArg= sqrt(h)*scalarResult*sigma + h*(this->r_ - (sigma*sigma/2));
+	}
 	return currentPrice*exp(expArg);
 
 }
-
 
 
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
@@ -146,14 +151,32 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 		pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
 		//For each assets 
 		for(int j=0; j<this->size_; j++){
-			MLET(path,i,j)=this->computeIteration(MGET(path,i-1,j),T/N,j,vectorGaussian);
+			MLET(path,i,j)=this->computeIteration(MGET(path,i-1,j),T/N,j,vectorGaussian,false);
 		}
 	}
 
 	pnl_vect_free(&vectorGaussian);
 }
 
+void BS::simul_market(PnlMat *path, double T, int H, PnlRng *rng){
+	
+	assert(H!=0);
+	//Initialize the first path row with the spot prices
+	for(int j=0; j<this->size_; j++){
+      MLET(path,0,j)= GET(this->spot_,j);
+  	}
+	PnlVect *vectorGaussian;
+	vectorGaussian= pnl_vect_create(this->size_);
 
+	for(int i=1;i<H+1;i++){
+		pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
+		//For each assets 
+		for(int j=0; j<this->size_; j++){
+			MLET(path,i,j)=this->computeIteration(MGET(path,i-1,j),T/H,j,vectorGaussian,true);
+		}
+	}
+	pnl_vect_free(&vectorGaussian);
+}
 
 
 

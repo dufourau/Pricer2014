@@ -11,11 +11,12 @@ class BS
 public:
   int size_; /// nombre d'actifs du modèle
   double r_; /// taux d'intérêt
+  PnlVect *trend; /// trend 
   double rho_; /// paramètre de corrélation
   PnlVect *sigma_; /// vecteur de volatilités
   PnlVect *spot_; /// valeurs initiales du sous-jacent
   PnlMat *chol;
-  BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_);
+  BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_,PnlVect *trend);
   ~BS();
 
   /**
@@ -74,8 +75,16 @@ public:
    * @param[in]  assetIndex
    * @param[out] computedPrice
    */
-  double computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian);
+  double computeIteration(double currentPrice, double h, int assetIndex, PnlVect* vectorGaussian,bool useTrend);
 
+  /* Simulation de la couverture
+   * @param[out] path contient la trajectoire simulée
+   * @param[in]  T
+   * @param[in]  H
+   */
+  void simul_market(PnlMat *path, double T, int H, PnlRng *rng);
+
+  
 };
 
 

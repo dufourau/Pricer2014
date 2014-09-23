@@ -8,14 +8,15 @@ MonteCarlo::MonteCarlo(Param* P){
   int option_size, timestep;
   PnlVect *spot;
   PnlVect *sigma;
+  PnlVect *trend;
   double rho, r, maturity;
   P->extract("option size", option_size);
   P->extract("spot", spot, option_size);
   P->extract("volatility", sigma, option_size);
   P->extract("interest rate", r);
   P->extract("correlation", rho);
-
-  this->mod_ = new BS(spot, sigma, rho, r, option_size);
+  P->extract("trend",trend,option_size);
+  this->mod_ = new BS(spot, sigma, rho, r, option_size, trend);
   this->opt_ = MonteCarlo::createOption(P);
   P->extract("sample number", this->samples_);
 
@@ -153,3 +154,5 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
   //calcul du prix de l'option en t>0
   prix = coeffActu * payOffOption;
 }
+
+

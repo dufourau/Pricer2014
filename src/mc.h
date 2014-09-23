@@ -66,6 +66,19 @@ public:
    * @param[out] retourne la bonne instance d'option
    */
   static Option* createOption(Param *P);
+
+  /*
+   * Simulation of the coverage
+   *
+   * @param[in]  T
+   * @param[in]  H
+   * @param[out]  errProfitLoss
+   * @param[out] freeRiskInvestPart
+   */
+  void simul_market(double T, int H, double errProfitLoss, PnlVect* freeRiskInvestPart);
+
+  
+
 };
 
 #endif /* _MC_H */
