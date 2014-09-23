@@ -7,7 +7,7 @@ using namespace std;
 
 
 MonteCarlo::MonteCarlo(Param* P){
-  int option_size, timestep;
+  int option_size, timestep_number;
   PnlVect *spot;
   PnlVect *sigma;
   PnlVect *trend;
@@ -26,7 +26,8 @@ MonteCarlo::MonteCarlo(Param* P){
   pnl_rng_sseed (this->rng, 0);
 
   P->extract("maturity", maturity);
-  this->h_ = maturity/((double) timestep);
+  P->extract("timestep number", timestep_number);
+  this->h_ = 1/((double) timestep_number);
 }
 
 MonteCarlo::~MonteCarlo(){
@@ -188,9 +189,7 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
   ic = (prix + 1.96*sqrt(varEstimator)/sqrt(this->samples_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(this->samples_));
 }
 
-void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic){
 
-}
 
 
 void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H){
@@ -234,5 +233,43 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H){
     pnl_vect_free(&s_i);
 
     pnl_mat_free(&simulMarketResult);
-
 }
+
+void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic){
+  int nbAsset = this->opt_->size_;
+  PnlMat* path_shift_up = pnl_mat_create(this->opt_->TimeSteps_+1, nbAsset);
+  PnlMat* path_shift_down = pnl_mat_create(this->opt_->TimeSteps_+1, nbAsset);
+  for (int i = 0; i < nbAsset; ++i)
+  {
+    double sum = 0;
+    PnlMat* path = pnl_mat_create(this->opt_->TimeSteps_+1, nbAsset);
+
+    for (int j = 0; j < this->samples_; ++j)
+    {
+
+      //Select the right asset method to call
+      if(t==0){
+        this->mod_->asset(path, opt_->T_, opt_->TimeSteps_, this->rng);
+      }else{
+        this->mod_->asset(path, t, this->opt_->TimeSteps_, this->opt_->T_, this->rng, past);
+      }
+      
+      this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, this->opt_->TimeSteps_);
+      this->mod_->shift_asset(path_shift_down, path, i, -this->h_, t, this->opt_->TimeSteps_);
+      pnl_mat_eq(path_shift_up, path_shift_down);
+
+  
+      sum += this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
+      //cout << "Sum = " << sum << endl;
+    }
+
+    if(t==0){
+      LET(delta, i) = sum * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(path, 0, i) * this->h_);
+    }else{
+      LET(delta, i) = sum * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(past, past->m-1, i) * this->h_);
+    }
+  }
+  pnl_mat_free(&path_shift_up);
+  pnl_mat_free(&path_shift_down);
+}
+

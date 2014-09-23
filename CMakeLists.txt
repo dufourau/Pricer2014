@@ -47,7 +47,7 @@ add_executable(simul-market-test src/test_simul_market.cpp src/bs.cpp src/parser
 target_link_libraries(simul-market-test ${LIBS})
 install(TARGETS simul-market-test DESTINATION bin)
 
- add_executable(mc-test src/test-mc.cpp src/mc.cpp src/bs.cpp src/optionBasket.cpp src/optionBarrier.cpp src/optionBarrierLow.cpp src/optionBarrierUp.cpp src/optionPerformance.cpp src/optionAsian.cpp src/utils.cpp src/option.cpp src/parser.cpp)
+ add_executable(mc-test src/test_mc.cpp src/mc.cpp src/bs.cpp src/optionBasket.cpp src/optionBarrier.cpp src/optionBarrierLow.cpp src/optionBarrierUp.cpp src/optionPerformance.cpp src/optionAsian.cpp src/utils.cpp src/option.cpp src/parser.cpp)
  target_link_libraries(mc-test ${LIBS})
  install(TARGETS mc-test DESTINATION bin)
 # Add google test

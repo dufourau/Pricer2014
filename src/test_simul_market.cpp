@@ -29,11 +29,7 @@ int main(int argc, char **argv)
   BS *b;
   b = new BS(spot,sigma,rho,r,size,trend);
   
-  
-
-  //TEST gaussien vector
-  //Initiliaze the generator
-  
+ 
   PnlRng *rng;
   rng= pnl_rng_create (PNL_RNG_MERSENNE);
   pnl_rng_sseed (rng, 0);
