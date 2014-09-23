@@ -11,7 +11,8 @@ correlation <float> 0.3
 
 option type <string> barrier_u
 payoff coefficients <vector> 0.2 0.2 0.2 0.2 0.2
-upper barrier <vector> 70 60 85 50 45
+#upper barrier <vector> 70 60 85 50 45
+upper barrier <vector> 170 160 185 150 145
 
 timestep number <int> 12
 sample number <int> 100000
