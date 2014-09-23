@@ -37,31 +37,35 @@ int main(int argc, char **argv)
   rng= pnl_rng_create (PNL_RNG_MERSENNE);
   pnl_rng_sseed (rng, 0);
   PnlMat *path;
-  path= pnl_mat_create(4,size);
+  path= pnl_mat_create(7,size);
   PnlMat *past_path;
 
-  b->asset(path,3,3,rng);
-  
+  b->asset(path,1,6,rng);
+  cout<<"path avant"<<endl;
+  pnl_mat_print(path);
   //Copy the result
   past_path= pnl_mat_copy(path);
   pnl_mat_free(&path);
-  //path= pnl_mat_create(6,size);
+  //path= pnl_mat_create(13,size);
   //b->asset(path,3,6,5,rng,past_path);
- 
   //Test mc
   MonteCarlo *mc;
   mc= new MonteCarlo(P);
-  double prix;
-  double ic;
-  mc->price(prix,ic);
-  cout<<"price à 0"<<prix<<endl;
-  cout<<"ic à 0"<<ic<<endl;
+  double refprix;
+  double refic;
+  
+  /*
+  mc->price(refprix,refic);
+  //cout<<"price à 0"<<refprix<<endl;
+  //cout<<"ic à 0"<<refic<<endl;
+  */
+  
   //Try with t=3
-  //mc->price(past_path,3,prix,ic);
 
-  //cout<<"price à t"<<prix<<endl;
-  //cout<<"ic à t"<<ic<<endl;
-
+  mc->price(past_path,0.6,refprix,refic);
+  cout<<"price à t"<<refprix<<endl;
+  cout<<"ic à t"<<refic<<endl;
+  
 
   pnl_mat_free(&past_path);
   pnl_rng_free(&rng);
@@ -69,7 +73,7 @@ int main(int argc, char **argv)
   pnl_vect_free(&sigma);
   delete P;
   delete b;
-  
+  delete mc;
 
 
 

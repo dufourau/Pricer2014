@@ -29,8 +29,11 @@ MonteCarlo::MonteCarlo(Param* P){
 }
 
 MonteCarlo::~MonteCarlo(){
+  delete (this->mod_)->spot_;
+  delete (this->mod_)->sigma_;
   delete this->mod_;
   pnl_rng_free(&(this->rng));
+  delete this->opt_;
 }
 
 /**
@@ -110,8 +113,8 @@ void MonteCarlo::price(double &prix, double &ic){
   path= pnl_mat_create(opt_->TimeSteps_+1,(this->mod_)->size_);
 
   //Calcul du payOff   
-  double payOffOption;
-  double mean_payOffSquare;
+  double payOffOption=0;
+  double mean_payOffSquare=0;
   double tmp;
   
   for(int m=1; m<=this->samples_; m++){
@@ -151,21 +154,19 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
   double coeffActu = exp(- (mod_->r_ * (opt_->T_ - t)) );
   
   //Matrix of assets
-  PnlMat* path = pnl_mat_new();
+  PnlMat* path;
   path= pnl_mat_create(opt_->TimeSteps_+1,(this->mod_)->size_);
-  
   //Calcul du payOff   
-  double payOffOption;
-  double mean_payOffSquare;
+  double payOffOption=0;
+  double mean_payOffSquare=0;
   double tmp;
-  
   for(int m=1; m<=this->samples_; m++){
     mod_->asset(path, t, opt_->TimeSteps_, opt_->T_, this->rng, past);
     tmp = opt_->payoff(path);
     payOffOption += tmp;
     mean_payOffSquare += tmp*tmp;
   }
-  
+  pnl_mat_print(path);
   payOffOption  = payOffOption/this->samples_;
   mean_payOffSquare = mean_payOffSquare/this->samples_;
   
