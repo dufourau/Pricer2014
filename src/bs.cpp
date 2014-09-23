@@ -71,7 +71,11 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 				double computedPrice;
 				double currentPrice= pnl_mat_get(path,currentIndex-1,j);
 				//Compute the new and set it
+<<<<<<< HEAD
 				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian, false);
+=======
+				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian);
+>>>>>>> 1a4053a6a7aabb824612016733ee1e12482fd0fe
 				//pnl_mat_print(path);
 				pnl_mat_set(path,currentIndex,j,computedPrice);
 							
