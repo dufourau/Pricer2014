@@ -68,7 +68,7 @@ public:
    */
   static Option* createOption(Param *P);
   
-  void freeRiskInvestedPart(PnlVect *V,double T, int H, double &profitLoss);
+  void freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss);
 
 };
 
