@@ -29,19 +29,18 @@ int main(int argc, char **argv)
   //TEST Constructor
   BS *b;
   b = new BS(spot,sigma,rho,r,size,trend);
-  
- 
   PnlRng *rng;
   rng= pnl_rng_create (PNL_RNG_MERSENNE);
-  pnl_rng_sseed (rng, 0);
+  pnl_rng_sseed(rng, 0);
   PnlMat *path;
   path= pnl_mat_create(4,size);
   MonteCarlo *mc;
   mc= new MonteCarlo(P);
   PnlVect *V;
-  V= pnl_vect_create(4);
+  V= pnl_vect_create(3);
   double profitLoss;
   mc->freeRiskInvestedPart(V,3,3,profitLoss);
+
   cout << "Price vector V: "<<endl;
   pnl_vect_print(V);
   cout << "Profit and Loss: "<< profitLoss<<endl;
