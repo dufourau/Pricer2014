@@ -32,8 +32,6 @@ int main(int argc, char **argv)
   PnlRng *rng;
   rng= pnl_rng_create (PNL_RNG_MERSENNE);
   pnl_rng_sseed(rng, 0);
-  PnlMat *path;
-  path= pnl_mat_create(4,size);
   MonteCarlo *mc;
   mc= new MonteCarlo(P);
   PnlVect *V;
