@@ -40,16 +40,15 @@ void BS::computeCholesky(PnlMat *chol,double rho_)
 	covMatrix= pnl_mat_create_from_scalar(size_,size_, rho_);
 	//Set the diagonal to 1.	
 	pnl_mat_set_diag(covMatrix,1,0);
-	
-	//TODO: Analyze the error message
 	int exitChol= pnl_mat_chol(covMatrix);
-	// cout<<"exitChol "<<exitChol<<endl;
+
+	if(exitChol != 0 ){
+
+	}
 	//Clone the result
 	pnl_mat_clone (chol, covMatrix);
 	//Free the temp matrix
 	pnl_mat_free(&covMatrix);
-
-
 }
 
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
@@ -125,11 +124,13 @@ double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVe
 	PnlVect rowChol;
 	rowChol= pnl_vect_wrap_mat_row(this->chol,assetIndex);
 	double scalarResult= pnl_vect_scalar_prod(&rowChol, vectorGaussian);
-	double sigma= pnl_vect_get(this->sigma_,assetIndex); 
+	double sigma=GET(this->sigma_,assetIndex); 
 	//Compute the exponential argument
 	double expArg;
+	double mu;
 	if (useTrend){
-		double mu=pnl_vect_get(this->trend,assetIndex);
+		
+		mu=GET(this->trend,assetIndex);
 		expArg= sqrt(h)*scalarResult*sigma + h*(mu - (sigma*sigma/2));
 	}else{
 		expArg= sqrt(h)*scalarResult*sigma + h*(this->r_ - (sigma*sigma/2));
@@ -164,7 +165,7 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 void BS::shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep){
 	pnl_mat_clone(shift_path, path);
 	int index = (int) t/timestep;
-	for (int i = index+1 ; i < path->m; ++i)
+	for (int i = index ; i < path->m; ++i)
 	{
 		MLET(shift_path, i, d) *= (1+h);
 	}
