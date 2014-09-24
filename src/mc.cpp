@@ -20,7 +20,7 @@ MonteCarlo::MonteCarlo(Param* P){
   P->extract("trend",trend,option_size);
   this->mod_ = new BS(spot, sigma, rho, r, option_size, trend);
   this->opt_ = MonteCarlo::createOption(P);
-  this->H_= 3;
+  this->H_= 6;
   P->extract("sample number", this->samples_);
 
   this->rng = pnl_rng_create(PNL_RNG_MERSENNE);
@@ -29,7 +29,7 @@ MonteCarlo::MonteCarlo(Param* P){
   P->extract("maturity", maturity);
   P->extract("timestep number", timestep_number);
   //The market step 
-  this->h_ = 1/((double) timestep_number);
+  this->h_ = ((double) maturity)/((double) this->H_);
 }
 
 MonteCarlo::~MonteCarlo(){
@@ -195,7 +195,7 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
 
 
 
-void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H, double &profitLoss){
+void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
 
     PnlMat *simulMarketResult,*tempMarketResult;
     simulMarketResult= pnl_mat_create(this->H_+1,this->mod_->size_);
@@ -218,7 +218,8 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H, double &profit
     ic= pnl_vect_create(this->mod_->size_);
     //Get the first delta
     this->delta(simulMarketResult,tho,delta,ic);
-    
+    cout<<"delta"<<endl;
+    pnl_vect_print(delta);
     PnlVect *s;
     s = pnl_vect_create(this->mod_->size_);
     pnl_mat_get_row(s,simulMarketResult,0);
@@ -290,16 +291,14 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
 
   
       sum += this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
-      //cout << "Sum = " << sum << endl;
+
     }
 
     if(t==0){
-      //cout<<"t=0"<<endl;
-      //pnl_mat_print(path);
+
       LET(delta, i) = sum * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(path, 0, i) * this->h_);
     }else{
-      //cout<<"t!=0"<<endl;
-      //pnl_mat_print(past);
+
       LET(delta, i) = sum * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(past, past->m-1, i) * this->h_);  
     }
   }

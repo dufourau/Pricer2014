@@ -40,16 +40,14 @@ void BS::computeCholesky(PnlMat *chol,double rho_)
 	covMatrix= pnl_mat_create_from_scalar(size_,size_, rho_);
 	//Set the diagonal to 1.	
 	pnl_mat_set_diag(covMatrix,1,0);
-	
-	//TODO: Analyze the error message
 	int exitChol= pnl_mat_chol(covMatrix);
-	cout<<"exitChol "<<exitChol<<endl;
+	if(exitChol != 0 ){
+
+	}
 	//Clone the result
 	pnl_mat_clone (chol, covMatrix);
 	//Free the temp matrix
 	pnl_mat_free(&covMatrix);
-
-
 }
 
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
