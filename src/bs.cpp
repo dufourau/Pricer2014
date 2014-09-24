@@ -164,7 +164,7 @@ void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
 void BS::shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep){
 	pnl_mat_clone(shift_path, path);
 	int index = (int) t/timestep;
-	for (int i = index+1 ; i < path->m; ++i)
+	for (int i = index ; i < path->m; ++i)
 	{
 		MLET(shift_path, i, d) *= (1+h);
 	}

@@ -18,6 +18,7 @@ public:
   Option *opt_; /*! pointeur sur l'option */
   PnlRng *rng; /*! pointeur sur le générateur */
   double h_; /*! pas de différence finie */
+  int H_; /* nombre de période de rebalancement*/
   int samples_; /*! nombre de tirages Monte Carlo */
 
   MonteCarlo(Param* P);
@@ -69,7 +70,7 @@ public:
   
   
 
-  void freeRiskInvestedPart(PnlVect *V,double T, int H);
+  void freeRiskInvestedPart(PnlVect *V,double T);
 
 };
 
