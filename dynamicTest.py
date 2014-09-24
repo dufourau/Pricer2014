@@ -42,7 +42,7 @@ if __name__ == '__main__':
     parser_compute_delta = subparsers.add_parser('compute_delta', help='Compute the delta of an option')
     parser_compute_delta.set_defaults(which='parser_compute_delta');
     parser_compute_delta.add_argument('-f','--file', required=True, type=argparse.FileType('r'))
-    parser_compute_delta.add_argument('-t','--time', type = float, default = '-1')
+    parser_compute_delta.add_argument('-t','--time', required=True, type = float, default = '-1')
 
     # Monte carlo
     parser_monte_carlo = subparsers.add_parser('monte_carlo', help='Test monte carlo')
