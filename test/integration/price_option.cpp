@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
 
   pnl_rng_sseed (rng, 0);
   PnlMat *path;
-  MonteCarlo *mc = new MonteCarlo(P);
+  MonteCarlo *mc = new MonteCarlo(P,4);
 
   double prix;
   double ic;

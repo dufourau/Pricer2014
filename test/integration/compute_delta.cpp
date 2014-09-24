@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
   PnlMat* past_path;
   past_path= pnl_mat_create(N+1,size);
   
-  MonteCarlo *mc = new MonteCarlo(P);
+  MonteCarlo *mc = new MonteCarlo(P,4);
   mc->mod_->asset(past_path,t,N,rng);
 
   delta= pnl_vect_create(size);

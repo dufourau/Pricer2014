@@ -6,7 +6,7 @@
 using namespace std;
 
 
-MonteCarlo::MonteCarlo(Param* P){
+MonteCarlo::MonteCarlo(Param* P, int H){
   int option_size, timestep_number;
   PnlVect *spot;
   PnlVect *sigma;
@@ -18,9 +18,8 @@ MonteCarlo::MonteCarlo(Param* P){
   P->extract("interest rate", r);
   P->extract("correlation", rho);
   P->extract("trend",trend,option_size);
-  this->mod_ = new BS(spot, sigma, rho, r, option_size, trend);
+  this->mod_ = new BS(spot, sigma, rho, r, option_size, trend, H);
   this->opt_ = MonteCarlo::createOption(P);
-  this->H_= 6;
   P->extract("sample number", this->samples_);
 
   this->rng = pnl_rng_create(PNL_RNG_MERSENNE);
@@ -28,8 +27,6 @@ MonteCarlo::MonteCarlo(Param* P){
 
   P->extract("maturity", maturity);
   P->extract("timestep number", timestep_number);
-  //The market step 
-  this->h_ = ((double) maturity)/((double) this->H_);
 }
 
 MonteCarlo::~MonteCarlo(){
@@ -207,13 +204,13 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
 void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
 
     PnlMat *simulMarketResult,*tempMarketResult;
-    simulMarketResult= pnl_mat_create(this->H_+1,this->mod_->size_);
+    simulMarketResult= pnl_mat_create(this->mod_->H_+1,this->mod_->size_);
     //Simulate H+1 values from 0 to T (market values)
 
 
 
 
-    mod_->simul_market(simulMarketResult,T,this->H_,this->rng);
+    mod_->simul_market(simulMarketResult,T,this->mod_->H_,this->rng);
 
     PnlVect* precDelta, *ecartDelta, *copydelta_i;
     //Current Time of iteration
@@ -241,7 +238,7 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
 
       for(int i=1; i<V->size;i++){
 
-        tho+=T/((double) this->H_);
+        tho+=T/((double) this->mod_->H_);
         //Extract the row from 0 to tho "time"
 
         tempMarketResult= pnl_mat_create(i,this->mod_->size_);
@@ -257,7 +254,7 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
         pnl_mat_get_row(s,simulMarketResult,i);
 
         cout<<"before LET"<<endl;
-        LET(V,i)=GET(V,i-1)*exp(mod_->r_ * T / ((double) this->H_)) - pnl_vect_scalar_prod(copydelta_i,s);
+        LET(V,i)=GET(V,i-1)*exp(mod_->r_ * T / ((double) this->mod_->H_)) - pnl_vect_scalar_prod(copydelta_i,s);
         pnl_vect_print(V);
         precDelta= pnl_vect_copy(delta);
         pnl_mat_free(&tempMarketResult);
@@ -278,9 +275,9 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
 
 void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic){
   int nbAsset = this->opt_->size_;
-  PnlMat* path_shift_up = pnl_mat_create(this->H_+1, nbAsset);
-  PnlMat* path_shift_down = pnl_mat_create(this->H_+1, nbAsset);
-  PnlMat* path = pnl_mat_create(this->H_+1, nbAsset);
+  PnlMat* path_shift_up = pnl_mat_create(this->mod_->H_+1, nbAsset);
+  PnlMat* path_shift_down = pnl_mat_create(this->mod_->H_+1, nbAsset);
+  PnlMat* path = pnl_mat_create(this->mod_->H_+1, nbAsset);
   for (int i = 0; i < nbAsset; ++i)
   {
     double sum = 0;
@@ -290,13 +287,14 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
 
       //Select the right asset method to call
       if(t==0){
-        this->mod_->asset(path, this->opt_->T_, this->H_, this->rng);
+        this->mod_->asset(path, this->opt_->T_, this->mod_->H_, this->rng);
       }else{
-        this->mod_->asset(path, t, this->H_, this->opt_->T_, this->rng, past);
+        this->mod_->asset(path, t, this->mod_->H_, this->opt_->T_, this->rng, past);
       }
 
-      this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, this->H_);
-      this->mod_->shift_asset(path_shift_down, path, i, -this->h_, t, this->H_);
+      
+      this->mod_->shift_asset(path_shift_up, path, i, this->mod_->H_, t, this->opt_->T_ / this->mod_->H_);
+      this->mod_->shift_asset(path_shift_down, path, i, -this->mod_->H_, t, this->opt_->T_ / this->mod_->H_);
 
   
       sum += this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
@@ -304,10 +302,10 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
 
     if(t==0){
 
-      LET(delta, i) = sum * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(path, 0, i) * this->h_);
+      LET(delta, i) = sum * exp(-GET(this->mod_->trend,i) * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(path, 0, i) * this->mod_->H_);
     }else{
 
-      LET(delta, i) = sum * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(past, past->m-1, i) * this->h_);  
+      LET(delta, i) = sum * exp(-GET(this->mod_->trend,i) * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(past, past->m-1, i) * this->mod_->H_);  
     }
   }
   pnl_mat_free(&path);
