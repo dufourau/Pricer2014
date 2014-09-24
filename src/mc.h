@@ -69,7 +69,10 @@ public:
   
   
 
-  void freeRiskInvestedPart(PnlVect *V,double T, int H);
+  void freeRiskInvestedPart(PnlVect *V,double T, int H, double &profitLoss);
+
+
+
 
 };
 

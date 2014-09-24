@@ -125,11 +125,13 @@ double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVe
 	PnlVect rowChol;
 	rowChol= pnl_vect_wrap_mat_row(this->chol,assetIndex);
 	double scalarResult= pnl_vect_scalar_prod(&rowChol, vectorGaussian);
-	double sigma= pnl_vect_get(this->sigma_,assetIndex); 
+	double sigma=GET(this->sigma_,assetIndex); 
 	//Compute the exponential argument
 	double expArg;
+	double mu;
 	if (useTrend){
-		double mu=pnl_vect_get(this->trend,assetIndex);
+		
+		mu=GET(this->trend,assetIndex);
 		expArg= sqrt(h)*scalarResult*sigma + h*(mu - (sigma*sigma/2));
 	}else{
 		expArg= sqrt(h)*scalarResult*sigma + h*(this->r_ - (sigma*sigma/2));

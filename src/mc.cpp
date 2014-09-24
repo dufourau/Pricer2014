@@ -193,12 +193,12 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
 
 
 
-void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H){
+void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H, double &profitLoss){
     PnlMat *simulMarketResult,*tempMarketResult;
     simulMarketResult= pnl_mat_create(H+1,this->mod_->size_);
     //Simulate H+1 values from 0 to T (market values)
     mod_->simul_market(simulMarketResult,T,H,this->rng);
-    PnlVect* precDelta, *ecartDelta, *delta_i, *copydelta_i, *s_i;
+    PnlVect* precDelta, *ecartDelta, *delta_i, *copydelta_i;
     //Current Time of iteration
     double tho=0.0;
     //Compute V0
@@ -209,7 +209,7 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H){
     delta= pnl_vect_create(this->mod_->size_);
     ic= pnl_vect_create(this->mod_->size_);
     //Get the first delta
-    //this->delta(simulMarketResult,tho,delta,ic);
+    this->delta(simulMarketResult,tho,delta,ic);
     
     PnlVect *s;
     s = pnl_vect_create(this->mod_->size_);
@@ -226,23 +226,24 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H){
 
         tho+=T/((double) H);
         //Extract the row from 0 to tho "time"
-        int currentIndex= (int) (tho*( (double) H) )/T;
-        tempMarketResult= pnl_mat_create(currentIndex,this->mod_->size_);
-        pnl_mat_extract_subblock (tempMarketResult, simulMarketResult, 0,currentIndex+1, 0, this->mod_->size_);
+        tempMarketResult= pnl_mat_create(i+1,this->mod_->size_);
+        pnl_mat_extract_subblock (tempMarketResult, simulMarketResult, 0,i+1, 0, this->mod_->size_);
         cout<<"tempMarketResult"<<endl;
         pnl_mat_print(tempMarketResult);
         this->delta(tempMarketResult, tho, delta,ic);
+        
         pnl_vect_print(delta);
         copydelta_i=pnl_vect_copy(delta);
         pnl_vect_minus_vect(copydelta_i,precDelta);
-        pnl_mat_get_row(s_i,simulMarketResult,i);
+        pnl_mat_get_row(s,simulMarketResult,i);
 
-        LET(V,i)=GET(V,i-1)*exp(mod_->r_ * T / ((double) H)) - pnl_vect_scalar_prod(copydelta_i,s_i);
+        LET(V,i)=GET(V,i-1)*exp(mod_->r_ * T / ((double) H)) - pnl_vect_scalar_prod(copydelta_i,s);
         precDelta= pnl_vect_copy(delta);
         pnl_mat_free(&tempMarketResult);
       }
     }
-    
+
+    profitLoss=GET(V,V->size-1)+pnl_vect_scalar_prod(precDelta,s)-this->opt_->payoff(simulMarketResult);
     pnl_vect_free(&s);
     pnl_vect_free(&delta);
     pnl_vect_free(&ic);
@@ -252,10 +253,12 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, int H){
     pnl_vect_free(&ecartDelta);
     pnl_vect_free(&delta_i);
     pnl_vect_free(&copydelta_i);
-    pnl_vect_free(&s_i);
     pnl_mat_free(&tempMarketResult);
     */
     pnl_mat_free(&simulMarketResult);
+
+
+
 }
 
 void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic){
