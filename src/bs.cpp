@@ -43,7 +43,7 @@ void BS::computeCholesky(PnlMat *chol,double rho_)
 	
 	//TODO: Analyze the error message
 	int exitChol= pnl_mat_chol(covMatrix);
-	cout<<"exitChol "<<exitChol<<endl;
+	// cout<<"exitChol "<<exitChol<<endl;
 	//Clone the result
 	pnl_mat_clone (chol, covMatrix);
 	//Free the temp matrix

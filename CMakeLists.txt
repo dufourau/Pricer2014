@@ -47,12 +47,6 @@ add_executable(simul-market-test src/test_simul_market.cpp src/bs.cpp src/parser
 target_link_libraries(simul-market-test ${LIBS})
 install(TARGETS simul-market-test DESTINATION bin)
 
-
-
-
- add_executable(mc-test src/test_mc.cpp src/mc.cpp src/bs.cpp src/optionBasket.cpp src/optionBarrier.cpp src/optionBarrierLow.cpp src/optionBarrierUp.cpp src/optionPerformance.cpp src/optionAsian.cpp src/utils.cpp src/option.cpp src/parser.cpp)
- target_link_libraries(mc-test ${LIBS})
- install(TARGETS mc-test DESTINATION bin)
 # Add google test
 if(EXISTS /usr/src/gtest)
     add_subdirectory(/usr/src/gtest ./gtest)
@@ -102,6 +96,13 @@ add_test(
     COMMAND runUnitTests
 )
 
-# add_executable(mc-pricer src/parser.cpp src/pricer.cpp)
-# target_link_libraries(mc-pricer ${LIBS})
-# install(TARGETS mc-pricer DESTINATION bin)
+# Main for tests 
+
+# Price option
+add_executable(price-option test/integration/price_option.cpp src/bs.cpp src/parser.cpp src/utils.cpp src/option.cpp src/mc.cpp src/optionAsian.cpp src/optionBarrier.cpp src/optionBarrierLow.cpp src/optionBarrierUp.cpp src/optionBasket.cpp src/optionPerformance.cpp)
+target_link_libraries(price-option ${LIBS})
+install(TARGETS price-option DESTINATION bin)
+
+add_executable(compute-delta test/integration/compute_delta.cpp src/bs.cpp src/parser.cpp src/utils.cpp src/option.cpp src/mc.cpp src/optionAsian.cpp src/optionBarrier.cpp src/optionBarrierLow.cpp src/optionBarrierUp.cpp src/optionBasket.cpp src/optionPerformance.cpp)
+target_link_libraries(compute-delta ${LIBS})
+install(TARGETS compute-delta DESTINATION bin)
