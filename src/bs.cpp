@@ -58,7 +58,6 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 	//Discretization step
 	//TODO Add case with the minimum step (real and simulated)
 	double h= T / N;
-	double h_market= T/ this->H_;
 	//Compute the error of modulo
 	PnlVect *vectorGaussian;
 	vectorGaussian= pnl_vect_create(this->size_);
@@ -82,7 +81,7 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 		}
 	}else{
 		//Copy past in path (The last row will be overwritten)
-		pnl_mat_set_subblock(path,past,0,0);
+		pnl_mat_extract_subblock(path,past,0,past->m-1,0,past->n);
 		//Get the last row of past
 		PnlVect prices;
 		prices= pnl_vect_wrap_mat_row(past,past->m-1);

@@ -2,6 +2,7 @@
 #include "bs.h"
 #include "parser.h"
 #include "mc.h"
+#include "pnl/pnl_finance.h"
 using namespace std;
 
 int main(int argc, char **argv)
@@ -21,16 +22,18 @@ int main(int argc, char **argv)
   P->extract("volatility", sigma, size);
   P->extract("interest rate", r);
   P->extract("correlation",rho);
-  
-  
+  P->extract("strike",strike);
+  double ptprice, ptdelta;
+  pnl_cf_call_bs(GET(spot,0),strike,T,r,0.0,GET(sigma,0),&ptprice,&ptdelta);
+  cout<< "\n\n" << ptprice <<"\n" <<ptdelta <<"\n\n"<<endl;
   //TEST Constructor
   PnlRng *rng;
   rng= pnl_rng_create (PNL_RNG_MERSENNE);
   pnl_rng_sseed(rng, 0);
   MonteCarlo *mc;
-  mc= new MonteCarlo(P,6);
+  mc= new MonteCarlo(P,2);
   PnlVect *V;
-  V= pnl_vect_create(5);
+  V= pnl_vect_create(3);
   double profitLoss;
   mc->freeRiskInvestedPart(V,T,profitLoss);
   cout << "Price vector V: "<<endl;

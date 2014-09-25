@@ -29,8 +29,8 @@ MonteCarlo::MonteCarlo(Param* P,int H)
 
   P->extract("maturity", maturity);
   P->extract("timestep number", timestep_number);
-  //The market step 
-  this->h_ = (1/((double) this->samples_));
+  //The market step set as 0.1 
+  this->h_ = 0.1;
 }
 
 MonteCarlo::~MonteCarlo(){
@@ -147,7 +147,7 @@ void MonteCarlo::price(double &prix, double &ic){
   cout<<"Var Estimator: "<<varEstimator<<endl;
   
   ic = (prix + 1.96*sqrt(varEstimator)/sqrt(this->samples_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(this->samples_));
-  
+  cout<< "Intervalle de confiance: " << ic << endl;
 }
 
 
@@ -274,20 +274,21 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
   PnlMat* path_shift_down = pnl_mat_create(this->H_+1, nbAsset);
   PnlMat* path = pnl_mat_create(this->H_+1, nbAsset);
   PnlVect* sum=pnl_vect_create(nbAsset);
+  double tstep=this->opt_->T_/this->opt_->TimeSteps_;
   for (int j = 0; j < this->samples_; ++j)
   {
 
     //Select the right asset method to call  
     if(t==0){
-        this->mod_->asset(path, this->opt_->T_, this->H_, this->rng);
+        this->mod_->asset(path, this->opt_->T_, this->opt_->TimeSteps_, this->rng);
     }else{
-        this->mod_->asset(path, t, this->H_, this->opt_->T_, this->rng, past);
+        this->mod_->asset(path, t, this->opt_->TimeSteps_, this->opt_->T_, this->rng, past);
     }
 
     for (int i = 0; i < nbAsset; ++i)
     {
-      this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, this->H_);
-      this->mod_->shift_asset(path_shift_down,path, i, -this->h_, t, this->H_);
+      this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, tstep);
+      this->mod_->shift_asset(path_shift_down,path, i, -this->h_, t, tstep);
       LET(sum,i)=GET(sum,i)+this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
     }
 
@@ -296,9 +297,9 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
   for (int i = 0; i < nbAsset; i++)
   {
     if(t==0){
-        LET(delta, i) = GET(sum,i) * exp(-GET(this->mod_->trend,i) * (this->opt_->T_ - t)) / (2.0 * this->samples_ * MGET(path, 0, i) * this->h_);
+        LET(delta, i) = GET(sum,i) * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2.0 * this->samples_ * MGET(path, 0, i) * this->h_);
     }else{
-        LET(delta, i) = GET(sum,i) * exp(-GET(this->mod_->trend,i) * (this->opt_->T_ - t)) / (2.0 * this->samples_ * MGET(past, past->m-1, i) * this->h_);  
+        LET(delta, i) = GET(sum,i) * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2.0 * this->samples_ * MGET(past, past->m-1, i) * this->h_);  
     }
   }
   pnl_vect_free(&sum);
