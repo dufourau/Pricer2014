@@ -11,6 +11,7 @@ interest rate <float>  0.04879
 correlation <float> 0.0
 trend <vector> 0.05079
 
+
 option type <string> basket
 payoff coefficients <vector> 0.025
 

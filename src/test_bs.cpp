@@ -28,7 +28,7 @@ int main(int argc, char **argv)
   PnlVect *delta;
   PnlMat *past_path;
   MonteCarlo *mc;
-  mc= new MonteCarlo(P);
+  mc= new MonteCarlo(P,4);
   double prix;
   double ic;
 

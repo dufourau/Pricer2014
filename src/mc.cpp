@@ -6,7 +6,7 @@
 using namespace std;
 
 
-MonteCarlo::MonteCarlo(Param* P){
+MonteCarlo::MonteCarlo(Param* P, int H){
   int option_size, timestep_number;
   PnlVect *spot;
   PnlVect *sigma;
@@ -18,9 +18,8 @@ MonteCarlo::MonteCarlo(Param* P){
   P->extract("interest rate", r);
   P->extract("correlation", rho);
   P->extract("trend",trend,option_size);
-  this->mod_ = new BS(spot, sigma, rho, r, option_size, trend);
+  this->mod_ = new BS(spot, sigma, rho, r, option_size, trend, H);
   this->opt_ = MonteCarlo::createOption(P);
-  this->H_= 6;
   P->extract("sample number", this->samples_);
 
   this->rng = pnl_rng_create(PNL_RNG_MERSENNE);
@@ -56,10 +55,11 @@ Option* MonteCarlo::createOption(Param *P){
   P->extract("option size", option_size);
   
   if(strcmp(key,"basket")==0){
-      P->extract("strike", strike);
-      P->extract("payoff coefficients", payoffCoeff, option_size);
-      Option* op = new OptionBasket(maturity, time_steps, option_size, strike, payoffCoeff);
-      return op;
+    P->extract("strike", strike);
+    P->extract("payoff coefficients", payoffCoeff, option_size);
+    Option* op = new OptionBasket(maturity, time_steps, option_size, strike, payoffCoeff);
+    pnl_vect_free(&payoffCoeff);
+    return op;
   }
       
   else if(strcmp(key,"asian")==0){
@@ -73,6 +73,8 @@ Option* MonteCarlo::createOption(Param *P){
     P->extract("payoff coefficients", payoffCoeff, option_size);
     P->extract("lower barrier", lowerBarrier, option_size);
     Option* op = new OptionBarrierLow(maturity, time_steps, option_size, strike, payoffCoeff,lowerBarrier);
+    pnl_vect_free(&payoffCoeff);
+    pnl_vect_free(&lowerBarrier);
     return op;
   }
 
@@ -81,6 +83,8 @@ Option* MonteCarlo::createOption(Param *P){
     P->extract("payoff coefficients", payoffCoeff, option_size);
     P->extract("upper barrier", upperBarrier, option_size);
     Option* op = new OptionBarrierUp(maturity, time_steps, option_size, strike, payoffCoeff,upperBarrier);
+    pnl_vect_free(&payoffCoeff);
+    pnl_vect_free(&upperBarrier);
     return op;
   }
 
@@ -90,12 +94,16 @@ Option* MonteCarlo::createOption(Param *P){
     P->extract("lower barrier", lowerBarrier, option_size);
     P->extract("upper barrier", upperBarrier, option_size);
     Option* op = new OptionBarrier(maturity, time_steps, option_size, strike, payoffCoeff,lowerBarrier,upperBarrier);
+    pnl_vect_free(&payoffCoeff);
+    pnl_vect_free(&lowerBarrier);
+    pnl_vect_free(&upperBarrier);
     return op;
   }
   
   else if(strcmp(key,"performance")==0){
     P->extract("payoff coefficients", payoffCoeff, option_size);
     Option* op = new OptionPerformance(maturity, time_steps, option_size, payoffCoeff);
+    pnl_vect_free(&payoffCoeff);
     return op;
   }
 
@@ -143,7 +151,7 @@ void MonteCarlo::price(double &prix, double &ic){
   double varEstimator = cst * (mean_payOffSquare - (payOffOption*payOffOption));
   
   //Print estimator variance on screen : To be remove ?
-  cout<<"Var Estimator: "<<varEstimator<<endl;
+  //cout<<"Var Estimator: "<<varEstimator<<endl;
   
   ic = (prix + 1.96*sqrt(varEstimator)/sqrt(this->samples_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(this->samples_));
   
@@ -170,7 +178,7 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
     payOffOption += tmp;
     mean_payOffSquare += tmp*tmp;
   }
-  pnl_mat_print(path);
+  //pnl_mat_print(path);
   payOffOption  = payOffOption/this->samples_;
   mean_payOffSquare = mean_payOffSquare/this->samples_;
   
@@ -186,7 +194,7 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
   double varEstimator = cst * (mean_payOffSquare - (payOffOption*payOffOption));
   
   //Print estimator variance on screen : To be remove ?
-  cout<<"Var Estimator: "<<varEstimator<<endl;
+  //cout<<"Var Estimator: "<<varEstimator<<endl;
   
   ic = (prix + 1.96*sqrt(varEstimator)/sqrt(this->samples_)) - (prix - 1.96*sqrt(varEstimator)/sqrt(this->samples_));
 }
@@ -198,13 +206,11 @@ void MonteCarlo::price(const PnlMat *past, double t, double &prix, double &ic){
 void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
 
     PnlMat *simulMarketResult,*tempMarketResult;
-    simulMarketResult= pnl_mat_create(this->H_+1,this->mod_->size_);
+    simulMarketResult= pnl_mat_create(this->mod_->H_+1,this->mod_->size_);
     //Simulate H+1 values from 0 to T (market values)
 
-
-
-
     mod_->simul_market(simulMarketResult,T,this->H_,this->rng);
+
     PnlVect* precDelta, *ecartDelta, *copydelta_i;
     //Current Time of iteration
     double tho=0.0;
@@ -231,7 +237,7 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
 
       for(int i=1; i<V->size;i++){
 
-        tho+=T/((double) this->H_);
+        tho+=T/((double) this->mod_->H_);
         //Extract the row from 0 to tho "time"
         tempMarketResult= pnl_mat_create(i,this->mod_->size_);
         pnl_mat_extract_subblock (tempMarketResult, simulMarketResult, 0, i+1, 0, this->mod_->size_);
@@ -246,7 +252,7 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
         pnl_mat_get_row(s,simulMarketResult,i);
 
         cout<<"before LET"<<endl;
-        LET(V,i)=GET(V,i-1)*exp(mod_->r_ * T / ((double) this->H_)) - pnl_vect_scalar_prod(copydelta_i,s);
+        LET(V,i)=GET(V,i-1)*exp(mod_->r_ * T / ((double) this->mod_->H_)) - pnl_vect_scalar_prod(copydelta_i,s);
         pnl_vect_print(V);
         precDelta= pnl_vect_copy(delta);
         pnl_mat_free(&tempMarketResult);
@@ -274,7 +280,6 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
   PnlVect* sum=pnl_vect_create(nbAsset);
   for (int j = 0; j < this->samples_; ++j)
   {
-
     //Select the right asset method to call  
     if(t==0){
         this->mod_->asset(path, this->opt_->T_, this->H_, this->rng);
@@ -287,9 +292,9 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
       this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, this->H_);
       this->mod_->shift_asset(path_shift_down, path, i, -this->h_, t, this->H_);
       LET(sum,i)=GET(sum,i)+this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
+
     }
 
-    
   }
   for (int i = 0; i < nbAsset; ++i)
   {

@@ -21,7 +21,7 @@ public:
   int H_; /* nombre de période de rebalancement*/
   int samples_; /*! nombre de tirages Monte Carlo */
 
-  MonteCarlo(Param* P);
+  MonteCarlo(Param* P,int H);
 
   ~MonteCarlo();
 

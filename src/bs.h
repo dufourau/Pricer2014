@@ -11,12 +11,13 @@ class BS
 public:
   int size_; /// nombre d'actifs du modèle
   double r_; /// taux d'intérêt
-  PnlVect *trend; /// trend 
+  PnlVect *trend; /// trend des actifs du marché
   double rho_; /// paramètre de corrélation
   PnlVect *sigma_; /// vecteur de volatilités
   PnlVect *spot_; /// valeurs initiales du sous-jacent
-  PnlMat *chol;
-  BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_,PnlVect *trend);
+  PnlMat *chol; /// matrice de cholesky calculé dans le constructeur
+  int H_; /// Number of iteration for the market simulation
+  BS(PnlVect *spot_, PnlVect *sigma_,double rho_,double r_,int size_,PnlVect *trend, int H);
   ~BS();
 
   /**
@@ -77,8 +78,8 @@ public:
 
   /* Simulation de la couverture
    * @param[out] path contient la trajectoire simulée
-   * @param[in]  T
-   * @param[in]  H
+   * @param[in] T la maturité (égale à celle de l'option)
+   * @param[in] H le nombre de rebalancement de notre portefeuille
    */
   void simul_market(PnlMat *path, double T, int H, PnlRng *rng);
   
