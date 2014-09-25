@@ -106,3 +106,9 @@ install(TARGETS price-option DESTINATION bin)
 add_executable(compute-delta test/integration/compute_delta.cpp src/bs.cpp src/parser.cpp src/utils.cpp src/option.cpp src/mc.cpp src/optionAsian.cpp src/optionBarrier.cpp src/optionBarrierLow.cpp src/optionBarrierUp.cpp src/optionBasket.cpp src/optionPerformance.cpp)
 target_link_libraries(compute-delta ${LIBS})
 install(TARGETS compute-delta DESTINATION bin)
+
+add_executable(profit-and-loss test/integration/profit_and_loss.cpp src/bs.cpp src/parser.cpp src/utils.cpp src/option.cpp src/mc.cpp src/optionAsian.cpp src/optionBarrier.cpp src/optionBarrierLow.cpp src/optionBarrierUp.cpp src/optionBasket.cpp src/optionPerformance.cpp)
+target_link_libraries(profit-and-loss ${LIBS})
+install(TARGETS profit-and-loss DESTINATION bin)
+
+configure_file(src/pricer.py pricer COPYONLY)

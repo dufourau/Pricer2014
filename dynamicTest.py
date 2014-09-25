@@ -44,15 +44,10 @@ if __name__ == '__main__':
     parser_compute_delta.add_argument('-f','--file', required=True, type=argparse.FileType('r'))
     parser_compute_delta.add_argument('-t','--time', required=True, type = float, default = '-1')
 
-    # Monte carlo
-    parser_monte_carlo = subparsers.add_parser('monte_carlo', help='Test monte carlo')
-    parser_monte_carlo.set_defaults(which='parser_monte_carlo');
-    parser_monte_carlo.add_argument('-f','--file', required=True, type=argparse.FileType('r'))
-
-    # Black Scholes
-    parser_bs = subparsers.add_parser('black_scholes', help='Test black scholes')
-    parser_bs.set_defaults(which='parser_bs');
-    parser_bs.add_argument('-f','--file', required=True, type=argparse.FileType('r'))
+    # Profit & Loss
+    parser_profit_and_loss = subparsers.add_parser('profit_and_loss', help='Test monte carlo')
+    parser_profit_and_loss.set_defaults(which='parser_profit_and_loss');
+    parser_profit_and_loss.add_argument('-f','--file', required=True, type=argparse.FileType('r'))
 
     args = parser.parse_args()
 
@@ -64,7 +59,7 @@ if __name__ == '__main__':
         if (not os.path.exists("build/compute-delta")):
             printout('Could not find build/compute-delta, build the project before using this script\n', RED);
         subprocess.call(['build/compute-delta',args.file.name, str(args.time)])
-    elif  (args.which == 'parser_monte_carlo'):
-        pass
-    elif  (args.which == 'parser_bs'):
-        pass
+    elif  (args.which == 'parser_profit_and_loss'):
+        if (not os.path.exists("build/profit-and-loss")):
+            printout('Could not find build/profit-and-loss, build the project before using this script\n', RED);
+        subprocess.call(['build/profit-and-loss',args.file.name])
