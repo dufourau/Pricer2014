@@ -53,6 +53,7 @@ void BS::computeCholesky(PnlMat *chol,double rho_)
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
 	
 	//Discretization step
+	//TODO Add case with the minimum step (real and simulated)
 	double h= T / N;
 	PnlVect *vectorGaussian;
 	vectorGaussian= pnl_vect_create(this->size_);
@@ -66,13 +67,9 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 			//Loop on assets
 			for(int j= 0; j < this->size_ ;j++){
 				//Get the currentPrice
-				double computedPrice;
-				double currentPrice= pnl_mat_get(path,currentIndex-1,j);
-				//Compute the new and set it
-				computedPrice= computeIteration(currentPrice,h,j,vectorGaussian, false);
-
+				double currentPrice= MGET(path,currentIndex-1,j);
 				//pnl_mat_print(path);
-				pnl_mat_set(path,currentIndex,j,computedPrice);
+				MLET(path,currentIndex,j)=computeIteration(currentPrice,h,j,vectorGaussian, false);
 							
 			}
 
@@ -95,7 +92,7 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 				//Get the currentPrice
 				double computedPrice;
 				if(currentIndex != past->m ){
-					double currentPrice= pnl_mat_get(path,currentIndex-2,j);
+					double currentPrice= MGET(path,currentIndex-2,j);
 					//Compute the new and set it
 					computedPrice= computeIteration(currentPrice,h,j,vectorGaussian,false);
 				}else{
@@ -104,7 +101,7 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 					computedPrice= computeIteration(currentPrice,h-t+currentTime,j,vectorGaussian,false);
 
 				}
-				pnl_mat_set(path,currentIndex-1,j,computedPrice);
+				MLET(path,currentIndex-1,j)=computedPrice;
 			}
 			
 			currentIndex++;

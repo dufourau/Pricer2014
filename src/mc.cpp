@@ -29,7 +29,7 @@ MonteCarlo::MonteCarlo(Param* P){
   P->extract("maturity", maturity);
   P->extract("timestep number", timestep_number);
   //The market step 
-  this->h_ = ((double) maturity)/((double) this->H_);
+  this->h_ = 0.1;
 }
 
 MonteCarlo::~MonteCarlo(){
@@ -205,7 +205,6 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
 
 
     mod_->simul_market(simulMarketResult,T,this->H_,this->rng);
-
     PnlVect* precDelta, *ecartDelta, *copydelta_i;
     //Current Time of iteration
     double tho=0.0;
@@ -234,7 +233,6 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
 
         tho+=T/((double) this->H_);
         //Extract the row from 0 to tho "time"
-
         tempMarketResult= pnl_mat_create(i,this->mod_->size_);
         pnl_mat_extract_subblock (tempMarketResult, simulMarketResult, 0, i+1, 0, this->mod_->size_);
         cout<<"tempMarketResult"<<endl;
@@ -256,6 +254,7 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
     }
 
     profitLoss=GET(V,V->size-1)+pnl_vect_scalar_prod(precDelta,s)-this->opt_->payoff(simulMarketResult);
+    cout<<"payoff"<<this->opt_->payoff(simulMarketResult)<<endl;
     pnl_vect_free(&s);
     pnl_vect_free(&delta);
     pnl_vect_free(&ic);
@@ -272,38 +271,37 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
   PnlMat* path_shift_up = pnl_mat_create(this->H_+1, nbAsset);
   PnlMat* path_shift_down = pnl_mat_create(this->H_+1, nbAsset);
   PnlMat* path = pnl_mat_create(this->H_+1, nbAsset);
-  for (int i = 0; i < nbAsset; ++i)
+  PnlVect* sum=pnl_vect_create(nbAsset);
+  for (int j = 0; j < this->samples_; ++j)
   {
-    double sum = 0;
-   
-    for (int j = 0; j < this->samples_; ++j)
-    {
 
-      //Select the right asset method to call
-      if(t==0){
+    //Select the right asset method to call  
+    if(t==0){
         this->mod_->asset(path, this->opt_->T_, this->H_, this->rng);
-      }else{
+    }else{
         this->mod_->asset(path, t, this->H_, this->opt_->T_, this->rng, past);
-      }
-      
+    }
+
+    for (int i = 0; i < nbAsset; ++i)
+    {
       this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, this->H_);
       this->mod_->shift_asset(path_shift_down, path, i, -this->h_, t, this->H_);
-
-  
-      sum += this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
-
+      LET(sum,i)=GET(sum,i)+this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
     }
 
+    
+  }
+  for (int i = 0; i < nbAsset; ++i)
+  {
     if(t==0){
-
-      LET(delta, i) = sum * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(path, 0, i) * this->h_);
+        LET(delta, i) = GET(sum,i) * exp(-GET(this->mod_->trend,i) * (this->opt_->T_ - t)) / (2.0 * this->samples_ * MGET(past, 0, i) * this->h_);
     }else{
-
-      LET(delta, i) = sum * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2 * this->samples_ * MGET(past, past->m-1, i) * this->h_);  
+        LET(delta, i) = GET(sum,i) * exp(-GET(this->mod_->trend,i) * (this->opt_->T_ - t)) / (2.0 * this->samples_ * MGET(past, past->m-1, i) * this->h_);  
     }
   }
+  pnl_vect_free(&sum);
   pnl_mat_free(&path);
   pnl_mat_free(&path_shift_up);
   pnl_mat_free(&path_shift_down);
 }
-
+ 
