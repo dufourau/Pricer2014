@@ -287,7 +287,7 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
     for (int i = 0; i < nbAsset; ++i)
     {
       this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, this->H_);
-      this->mod_->shift_asset(path_shift_down,path, i, -this->h_, t, this->H_);
+      this->mod_->shift_asset(path_shift_down, path, i, -this->h_, t, this->H_);
       LET(sum,i)=GET(sum,i)+this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
     }
 
