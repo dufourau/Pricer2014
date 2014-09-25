@@ -18,4 +18,6 @@ Pricer2014
 
 
 = Execution Instructions =
-  - To use the pricer you can use the binary pricer
+  To use the pricer you can use the binary pricer:
+    - pricer option.dat : print out the price of the option
+    - pricer -c option.dat : print out the P&L of the option

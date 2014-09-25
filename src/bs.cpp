@@ -54,7 +54,7 @@ void BS::computeCholesky(PnlMat *chol,double rho_)
 }
 
 void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMat *past){
-	
+	//cout << "enter asset" << endl;
 	//Discretization step
 	//TODO Add case with the minimum step (real and simulated)
 	double h= T / N;
@@ -63,8 +63,20 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 	vectorGaussian= pnl_vect_create(this->size_);
 	//Start by testing if t is a discretization time
 	if(fmod(t,h)>= 0 && 0.005>=fmod(t,h)){
-		pnl_mat_set_subblock(path,past,0,0);
-		int currentIndex= past->m;
+		
+		double current_t= t- T/ this->H_;
+		while(!(fmod(current_t,h)>= 0 && 0.005>=fmod(current_t,h))){
+			current_t -= T/ this->H_;
+		}
+		
+		PnlMat* temp;
+		temp= pnl_mat_new();
+		//Copy past in path (The last row will be overwritten)
+		pnl_mat_extract_subblock(temp,past,0,current_t * this->H_/T + 1,0,this->size_);
+		pnl_mat_set_subblock(path,temp,0,0);
+		pnl_mat_free(&temp);
+
+		int currentIndex= current_t * this->H_/T;
 		//Loop over time: t+h to T
 		for(double i= t; i< T ; i=i+h){	
 			pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
@@ -72,47 +84,47 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 			for(int j= 0; j < this->size_ ;j++){
 				//Get the currentPrice
 				double currentPrice= MGET(path,currentIndex-1,j);
-				//pnl_mat_print(path);
 				MLET(path,currentIndex,j)=computeIteration(currentPrice,h,j,vectorGaussian, false);
 							
 			}
 
 			currentIndex++;
 		}
+		
 	}else{
+		double current_t= t- T/ this->H_;
+		while(!(fmod(current_t,h)>= 0 && 0.005>=fmod(current_t,h))){
+			current_t -= T/ this->H_;
+		}
+		
+		PnlMat* temp;
+		temp= pnl_mat_new();
 		//Copy past in path (The last row will be overwritten)
-		pnl_mat_extract_subblock(path,past,0,past->m-1,0,past->n);
+		pnl_mat_extract_subblock(temp,past,0,current_t * this->H_/T + 1,0,this->size_);
+		pnl_mat_set_subblock(path,temp,0,0);
+		pnl_mat_free(&temp);
 		//Get the last row of past
-		PnlVect prices;
-		prices= pnl_vect_wrap_mat_row(past,past->m-1);
-		int currentIndex= past->m;
-		double currentTime= (currentIndex-1)*h;
-		//Loop over time: currentTime to T
-		for(double i= currentTime; i< T+h ; i=i+h){
+		int currentIndex= past->m-1;
+		for(int k= currentIndex; k< path->m ; k++){
 			pnl_vect_rng_normal(vectorGaussian,this->size_,rng);
-			//cout<<"curr "<<currentIndex<<endl;
 			//Loop on assets
 			for(int j= 0; j < this->size_ ;j++){
 				//Get the currentPrice
 				double computedPrice;
-				if(currentIndex != past->m ){
-					double currentPrice= MGET(path,currentIndex-2,j);
+				if(k!=currentIndex){
+					double currentPrice= MGET(path,k-1,j);
 					//Compute the new and set it
 					computedPrice= computeIteration(currentPrice,h,j,vectorGaussian,false);
 				}else{
-					double currentPrice= GET(&prices,j);
+					double currentPrice= MGET(past,past->m-1,j);
 					//Compute the new price and set it with a different step
-					computedPrice= computeIteration(currentPrice,h-t+currentTime,j,vectorGaussian,false);
-
+					computedPrice= computeIteration(currentPrice,(double) currentIndex*h-t,j,vectorGaussian,false);
 				}
-				MLET(path,currentIndex-1,j)=computedPrice;
+				MLET(path,k,j)=computedPrice;
 			}
-			
-			currentIndex++;
 		}
-
+		
 	}
-	pnl_vect_free(&vectorGaussian);
 }
 
 void BS::asset(PnlMat *path, double T, int N, PnlRng *rng){
@@ -158,7 +170,7 @@ double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVe
 
 void BS::shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, double t, double timestep){
 	//Clone the in matrix into the out matrix
-	pnl_mat_clone(shift_path, path);
+	pnl_mat_clone(shift_path,path);
 	//Calculate the index associate to the time t
 	int index = (int) t*timestep;
 	for (int i = index ; i < path->m; ++i)

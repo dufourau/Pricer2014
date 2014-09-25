@@ -36,12 +36,6 @@ int main(int argc, char **argv)
   V= pnl_vect_create(3);
   double profitLoss;
   mc->freeRiskInvestedPart(V,T,profitLoss);
-  cout << "Price vector V: "<<endl;
-  pnl_vect_print(V);
-  cout << "Profit and Loss: "<< profitLoss<<endl;
-  //b->simul_market(path,3,3,rng);
-  //cout << "path"<<endl;
-  //pnl_mat_print(path);
   pnl_vect_free(&spot);
   pnl_vect_free(&sigma);
   exit(0);
