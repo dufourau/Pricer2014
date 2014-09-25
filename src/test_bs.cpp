@@ -45,7 +45,7 @@ int main(int argc, char **argv)
   //for barrier_u
   //mc->delta(past_path,0.5, delta, NULL);
   //for basket_1
-  mc->delta(past_path,0,delta,NULL);
+  //mc->delta(past_path,0,delta,NULL);
   cout<<"Le vecteur delta: "<<endl;
   pnl_vect_print(delta);
   pnl_vect_free(&delta);

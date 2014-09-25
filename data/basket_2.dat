@@ -9,7 +9,7 @@ maturity <float> 1
 volatility <vector> 0.2
 interest rate <float>   0.04879
 correlation <float> 0.7
-trend <vector> 0.04879
+trend <vector> 0.055879
 
 option type <string> basket
 payoff coefficients <vector> 0.025

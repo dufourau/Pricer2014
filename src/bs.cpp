@@ -91,6 +91,7 @@ void BS::asset(PnlMat *path, double t, int N, double T, PnlRng *rng, const PnlMa
 			currentIndex++;
 		}
 		
+		
 	}else{
 		double current_t= t- T/ this->H_;
 		while(!(fmod(current_t,h)>= 0 && 0.005>=fmod(current_t,h))){
@@ -172,7 +173,7 @@ void BS::shift_asset(PnlMat *shift_path, const PnlMat *path,int d, double h, dou
 	//Clone the in matrix into the out matrix
 	pnl_mat_clone(shift_path,path);
 	//Calculate the index associate to the time t
-	int index = (int) t*timestep;
+	int index = (int) t/timestep;
 	for (int i = index ; i < path->m; ++i)
 	{
 		MLET(shift_path, i, d) *= (1+h);

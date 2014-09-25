@@ -217,6 +217,8 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
     ic= pnl_vect_create(this->mod_->size_);
     //Get the first delta
     this->delta(simulMarketResult,tho,delta,ic);
+    cout<<"delta "<< tho<<endl;
+    pnl_vect_print(delta);
     PnlVect *s;
     s = pnl_vect_create(this->mod_->size_);
     pnl_mat_get_row(s,simulMarketResult,0);
@@ -227,22 +229,30 @@ void MonteCarlo::freeRiskInvestedPart(PnlVect *V,double T, double &profitLoss){
     //We will itirate 
     if(V->size>0){
 
-      for(int i=1; i<V->size;i++){
+      for(int i=1; i<V->size-1;i++){
 
         tho+=T/((double) this->H_);
         //Extract the row from 0 to tho "time"
         tempMarketResult= pnl_mat_create(i,this->mod_->size_);
         pnl_mat_extract_subblock (tempMarketResult, simulMarketResult, 0, i+1, 0, this->mod_->size_);
+    
+        //pnl_vect_print(delta);
+        //pnl_mat_print(tempMarketResult); 
         this->delta(tempMarketResult, tho, delta,ic);
+        cout<<"delta "<< tho<<endl;
+        pnl_vect_print(delta);
         copydelta_i=pnl_vect_copy(delta);
         pnl_vect_minus_vect(copydelta_i,precDelta);
         pnl_mat_get_row(s,simulMarketResult,i);
         LET(V,i)=GET(V,i-1)*exp(mod_->r_ * T / ((double) this->H_)) - pnl_vect_scalar_prod(copydelta_i,s);
         precDelta= pnl_vect_copy(delta);
+        
         pnl_mat_free(&tempMarketResult);
       }
     }
-
+    //Assume we don't rebalance for the last date
+    pnl_mat_get_row(s,simulMarketResult,V->size-1);
+    LET(V,V->size-1)=GET(V,V->size-2)*exp(mod_->r_ * T / ((double) this->H_));
     profitLoss=GET(V,V->size-1)+pnl_vect_scalar_prod(precDelta,s)-this->opt_->payoff(simulMarketResult);
     pnl_vect_free(&s);
     pnl_vect_free(&delta);
@@ -281,11 +291,21 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
       
       this->mod_->shift_asset(path_shift_up, path, i, this->h_, t, tstep);
  
-      
       this->mod_->shift_asset(path_shift_down,path, i, -this->h_, t, tstep);
       
       LET(sum,i)=GET(sum,i)+this->opt_->payoff(path_shift_up) - this->opt_->payoff(path_shift_down);
-    
+      /*
+      cout<<"t "<<t<<endl;
+      cout<<"path"<<endl;
+      pnl_mat_print(path);
+      cout<<"path_shift_down"<<endl;
+      pnl_mat_print(path_shift_up);
+      cout<<"path_shift_up"<<endl;
+      pnl_mat_print(path_shift_down);
+      cout<<"t!!!!!!!!!!!!!!!!!!!!!!!"<<t<<endl;
+      cout<<"payoff up "<< this->opt_->payoff(path_shift_up)<<endl;
+      cout<<"payoff up "<< this->opt_->payoff(path_shift_down)<<endl;
+      */
 
     }
   }
@@ -298,7 +318,10 @@ void MonteCarlo::delta(const PnlMat *past, double t, PnlVect *delta, PnlVect *ic
 
         LET(delta, i) = GET(sum,i) * exp(-this->mod_->r_ * (this->opt_->T_ - t)) / (2.0 * this->samples_ * MGET(past, past->m-1, i) * this->h_);  
     }
+    
+
   }
+
   pnl_vect_free(&sum);
   pnl_mat_free(&path);
   pnl_mat_free(&path_shift_up);

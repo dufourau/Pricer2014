@@ -31,11 +31,15 @@ int main(int argc, char **argv)
   rng= pnl_rng_create (PNL_RNG_MERSENNE);
   pnl_rng_sseed(rng, 0);
   MonteCarlo *mc;
-  mc= new MonteCarlo(P,2);
+  mc= new MonteCarlo(P,3);
   PnlVect *V;
-  V= pnl_vect_create(3);
-  double profitLoss;
+  V= pnl_vect_create(4);
+  double profitLoss=0;
+
   mc->freeRiskInvestedPart(V,T,profitLoss);
+  cout<<"V"<<endl;
+  pnl_vect_print(V);
+  cout<<"profitLoss"<<profitLoss<<endl;
   pnl_vect_free(&spot);
   pnl_vect_free(&sigma);
   exit(0);
