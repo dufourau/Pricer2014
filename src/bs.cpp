@@ -1,4 +1,4 @@
-#include <iostream>
+f#include <iostream>
 #include <cstdlib>
 #include <cstring>
 #include <math.h>  
@@ -164,6 +164,7 @@ double BS::computeIteration(double currentPrice, double h, int assetIndex, PnlVe
 		expArg= sqrt(h)*scalarResult*sigma + h*(mu - (sigma*sigma/2));
 	}else{
 		expArg= sqrt(h)*scalarResult*sigma + h*(this->r_ - (sigma*sigma/2));
+		cout<<"exp arg : "<<expArg<<endl;
 	}
 	return currentPrice*exp(expArg);
 

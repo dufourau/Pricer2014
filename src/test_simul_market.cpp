@@ -31,7 +31,7 @@ int main(int argc, char **argv)
   rng= pnl_rng_create (PNL_RNG_MERSENNE);
   pnl_rng_sseed(rng, 0);
   MonteCarlo *mc;
-  mc= new MonteCarlo(P,3);
+  mc= new MonteCarlo(P,10);
   PnlVect *V;
   V= pnl_vect_create(4);
   double profitLoss=0;
